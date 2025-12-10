@@ -19,6 +19,9 @@ marked.setOptions({
   }),
 });
 
+// Fragment separator - uses HTML comment syntax that won't render
+const FRAGMENT_SEPARATOR = /<!--\s*fragment\s*-->/gi;
+
 // --- Configuration ---
 const VERSION = '1.0.0';
 const DEFAULT_SLIDES_DIR = './slides';
@@ -203,6 +206,14 @@ const loadSlides = (slidesDir: string): Slide[] => {
     .filter((slide) => !slide.metadata.hidden); // Filter out hidden slides
 };
 
+// --- Helper: Parse fragments from markdown content ---
+const parseFragments = (content: string): string[] => {
+  // Split content by fragment separator
+  const fragments = content.split(FRAGMENT_SEPARATOR);
+  // Filter out empty fragments and trim whitespace
+  return fragments.map(f => f.trim()).filter(f => f.length > 0);
+};
+
 // --- Component: Render Markdown to terminal ---
 const renderMarkdown = (content: string): string => {
   return marked.parse(content) as string;
@@ -212,9 +223,15 @@ const renderMarkdown = (content: string): string => {
 const MarkdownSlide = ({
   slide,
   isActive,
+  step,
+  totalSteps,
+  onStepChange,
 }: {
   slide: Slide & { type: 'markdown' };
   isActive: boolean;
+  step: number;
+  totalSteps: number;
+  onStepChange: (newStep: number) => void;
 }) => {
   const [scrollY, setScrollY] = useState(0);
   const { stdout } = useStdout();
@@ -241,7 +258,13 @@ const MarkdownSlide = ({
 
   // Remove the first header from content for rendering (we show it as BigText)
   const contentWithoutHeader = slide.content.replace(/^#\s+.+\n?/, '');
-  const renderedContent = renderMarkdown(contentWithoutHeader);
+
+  // Parse fragments from the content
+  const fragments = parseFragments(contentWithoutHeader);
+
+  // Build visible content by joining fragments up to current step
+  const visibleContent = fragments.slice(0, step + 1).join('\n\n');
+  const renderedContent = renderMarkdown(visibleContent);
   const contentLines = renderedContent.split('\n');
 
   // Get visible lines based on scroll position
@@ -267,12 +290,17 @@ const MarkdownSlide = ({
         <Text>{visibleLines.join('\n')}</Text>
       </Box>
 
-      <Box marginTop={1} justifyContent="center" width={contentWidth}>
+      <Box marginTop={1} justifyContent="space-between" width={contentWidth} paddingX={1}>
         <Text dimColor>
           {scrollY > 0 ? '↑ ' : '  '} Line: {scrollY + 1}/
           {Math.max(1, contentLines.length)}{' '}
           {scrollY + viewportHeight < contentLines.length ? ' ↓' : '  '}
         </Text>
+        {totalSteps > 1 && (
+          <Text color="cyan">
+            Step {step + 1}/{totalSteps}
+          </Text>
+        )}
       </Box>
     </Box>
   );
@@ -370,6 +398,14 @@ const useSlideWatcher = (initialSlides: Slide[], slidesDir: string) => {
   return { slides, reloadCount };
 };
 
+// --- Helper: Get total steps for a slide ---
+const getSlideSteps = (slide: Slide): number => {
+  if (slide.type !== 'markdown') return 1;
+  const contentWithoutHeader = slide.content.replace(/^#\s+.+\n?/, '');
+  const fragments = parseFragments(contentWithoutHeader);
+  return Math.max(1, fragments.length);
+};
+
 // --- React App (The UI) ---
 const App = ({
   slides: initialSlides,
@@ -385,6 +421,7 @@ const App = ({
   const { exit } = useApp();
   const { slides, reloadCount } = useSlideWatcher(initialSlides, slidesDir);
   const [index, setIndex] = useState(initialIndex);
+  const [step, setStep] = useState(0);
 
   // Adjust index if current slide no longer exists after reload
   useEffect(() => {
@@ -405,14 +442,48 @@ const App = ({
   }
 
   const currentSlide = slides[index];
+  const totalSteps = getSlideSteps(currentSlide);
+
+  // Reset step when changing slides
+  useEffect(() => {
+    setStep(0);
+  }, [index]);
 
   useInput((input, key) => {
     if (key.escape || input === 'q') {
       onExit({ type: 'quit' });
       exit();
     }
-    if (key.leftArrow) setIndex((i) => Math.max(0, i - 1));
-    if (key.rightArrow) setIndex((i) => Math.min(slides.length - 1, i + 1));
+
+    // Right arrow: advance step or go to next slide
+    if (key.rightArrow) {
+      if (step < totalSteps - 1) {
+        // More steps remain on current slide - reveal next fragment
+        setStep(s => s + 1);
+      } else {
+        // All steps visible - move to next slide
+        if (index < slides.length - 1) {
+          setIndex(i => i + 1);
+        }
+      }
+    }
+
+    // Left arrow: go back a step or to previous slide
+    if (key.leftArrow) {
+      if (step > 0) {
+        // Hide last fragment
+        setStep(s => s - 1);
+      } else {
+        // Go to previous slide (showing all its steps)
+        if (index > 0) {
+          const prevSlide = slides[index - 1];
+          const prevSteps = getSlideSteps(prevSlide);
+          setIndex(i => i - 1);
+          // Show all steps of previous slide
+          setTimeout(() => setStep(prevSteps - 1), 0);
+        }
+      }
+    }
   });
 
   const handlePlay = () => {
@@ -422,18 +493,28 @@ const App = ({
     }
   };
 
+  const handleStepChange = useCallback((newStep: number) => {
+    setStep(newStep);
+  }, []);
+
   return (
     <Box flexDirection="column" height="100%">
       <Box flexGrow={1} alignItems="center">
         {currentSlide.type === 'markdown' ? (
-          <MarkdownSlide slide={currentSlide} isActive={true} />
+          <MarkdownSlide
+            slide={currentSlide}
+            isActive={true}
+            step={step}
+            totalSteps={totalSteps}
+            onStepChange={handleStepChange}
+          />
         ) : (
           <CastSlide slide={currentSlide} isActive={true} onPlay={handlePlay} />
         )}
       </Box>
 
       <Box justifyContent="space-between" paddingX={2} borderStyle="single" borderColor="gray">
-        <Text dimColor>←/→ Nav | ↑/↓/Space: Scroll | q: Quit</Text>
+        <Text dimColor>←/→ Nav/Reveal | ↑/↓/Space: Scroll | q: Quit</Text>
         <Box>
           {reloadCount > 0 && <Text color="green" dimColor>[Live] </Text>}
           <Text dimColor>Slide {index + 1}/{slides.length}</Text>
