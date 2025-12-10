@@ -8,6 +8,7 @@ import path from 'node:path';
 import { spawnSync } from 'bun';
 import { marked } from 'marked';
 import TerminalRenderer from 'marked-terminal';
+import matter from 'gray-matter';
 
 // Configure marked for terminal output
 marked.setOptions({
@@ -21,9 +22,20 @@ marked.setOptions({
 const SLIDES_DIR = './slides';
 
 // --- Types ---
+type SlideLayout = 'default' | 'center' | 'split';
+type SlideTheme = 'default' | 'neon' | 'minimal';
+
+type SlideMetadata = {
+  title?: string;
+  layout?: SlideLayout;
+  theme?: SlideTheme;
+  hidden?: boolean;
+  notes?: string;
+};
+
 type Slide =
-  | { type: 'markdown'; content: string; title: string; filename: string }
-  | { type: 'cast'; path: string; title: string; filename: string };
+  | { type: 'markdown'; content: string; title: string; filename: string; metadata: SlideMetadata }
+  | { type: 'cast'; path: string; title: string; filename: string; metadata: SlideMetadata };
 
 type AppAction =
   | { type: 'quit' }
@@ -45,21 +57,40 @@ const loadSlides = (): Slide[] => {
       const ext = path.extname(filePath);
       const filename = path.basename(filePath);
       // Cleanup title: "01_Intro.md" -> "Intro"
-      const title = filename
+      const filenameTitle = filename
         .replace(ext, '')
         .replace(/^\d+[_-]/, '')
         .replace(/[_-]/g, ' ');
 
       if (ext === '.cast') {
-        return { type: 'cast', path: filePath, title, filename };
+        return { type: 'cast', path: filePath, title: filenameTitle, filename, metadata: {} };
       }
+
+      // Parse frontmatter from markdown files
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const { data: frontmatter, content } = matter(fileContent);
+
+      // Extract metadata with type safety
+      const metadata: SlideMetadata = {
+        title: typeof frontmatter.title === 'string' ? frontmatter.title : undefined,
+        layout: ['default', 'center', 'split'].includes(frontmatter.layout) ? frontmatter.layout : undefined,
+        theme: ['default', 'neon', 'minimal'].includes(frontmatter.theme) ? frontmatter.theme : undefined,
+        hidden: typeof frontmatter.hidden === 'boolean' ? frontmatter.hidden : undefined,
+        notes: typeof frontmatter.notes === 'string' ? frontmatter.notes : undefined,
+      };
+
+      // Use frontmatter title if present, otherwise fall back to filename-derived title
+      const title = metadata.title || filenameTitle;
+
       return {
         type: 'markdown',
-        content: fs.readFileSync(filePath, 'utf-8'),
+        content,
         title,
         filename,
+        metadata,
       };
-    });
+    })
+    .filter((slide) => !slide.metadata.hidden); // Filter out hidden slides
 };
 
 // --- Component: Render Markdown to terminal ---
@@ -92,10 +123,11 @@ const MarkdownSlide = ({
   // Reset scroll on slide change
   useEffect(() => setScrollY(0), [slide.filename]);
 
-  // Extract the first # Header to display as BigText
+  // Use frontmatter title if provided, otherwise extract the first # Header
   const lines = slide.content.split('\n');
-  const bigHeader =
-    lines.find((l) => l.startsWith('# '))?.replace('# ', '') || slide.title;
+  const contentHeader = lines.find((l) => l.startsWith('# '))?.replace('# ', '');
+  // Prefer frontmatter title (already in slide.title if set), then content header, then filename-derived title
+  const bigHeader = slide.metadata.title || contentHeader || slide.title;
 
   // Remove the first header from content for rendering (we show it as BigText)
   const contentWithoutHeader = slide.content.replace(/^#\s+.+\n?/, '');
