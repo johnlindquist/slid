@@ -33,6 +33,7 @@
     "ink-gradient": "^3.0.0",
     "marked": "^17.0.1",
     "marked-terminal": "^7.3.0",
-    "react": "^19.2.1"
+    "react": "^19.2.1",
+    "terminal-image": "^4.1.0"
   }
 }
