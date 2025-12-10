@@ -422,7 +422,8 @@ const MarkdownSlide = ({
   const { stdout } = useStdout();
   const terminalWidth = stdout?.columns || 80;
   const terminalHeight = stdout?.rows || 24;
-  const viewportHeight = terminalHeight - 10; // Reserve space for header/footer
+  // Calculate viewport: terminal height - footer(3) - BigText header(~5) - padding/borders(~6)
+  const viewportHeight = Math.max(5, terminalHeight - 14);
   const contentWidth = Math.min(terminalWidth - 8, 100); // Fixed width with max cap
 
   useInput((input, key) => {
@@ -509,7 +510,7 @@ const MarkdownSlide = ({
   const visibleLines = contentLines.slice(scrollY, scrollY + viewportHeight);
 
   return (
-    <Box flexDirection="column" alignItems="center" flexGrow={1} paddingTop={2} width="100%">
+    <Box flexDirection="column" alignItems="center" width="100%">
       <Box flexDirection="column" alignItems="center" marginBottom={1} width={contentWidth}>
         <Gradient name="cristal">
           <BigText text={bigHeader} font="tiny" />
@@ -902,9 +903,14 @@ const App = ({
     );
   }
 
+  const { stdout } = useStdout();
+  const terminalHeight = stdout?.rows || 24;
+  // Reserve 3 lines for footer (border + content + border)
+  const contentHeight = terminalHeight - 3;
+
   return (
-    <Box flexDirection="column" height="100%">
-      <Box flexGrow={1} alignItems="center">
+    <Box flexDirection="column">
+      <Box height={contentHeight} alignItems="flex-start" justifyContent="center">
         {currentSlide.type === 'markdown' ? (
           <MarkdownSlide
             slide={currentSlide}
