@@ -1,0 +1,68 @@
+{
+  "version": 2,
+  "entries": {
+    "CLAUDE.md": {
+      "mtime": 1765336791385,
+      "size": 2606,
+      "contentHash": "d2a17c0be7103e630bc8955d900380397935043b17a9a4d734989871431a6e5a",
+      "isBinary": false,
+      "tokens": 764
+    },
+    "package.json": {
+      "mtime": 1765336832892,
+      "size": 498,
+      "contentHash": "5ad920ce9699f1831ef0831d197e0d7f8e0a6c5a566865ecdb828042e8c89bc9",
+      "isBinary": false,
+      "tokens": 188
+    },
+    "tsconfig.json": {
+      "mtime": 1765336791385,
+      "size": 713,
+      "contentHash": "11a68339a9c6a0c04a67b95dff9eefd9a92c42fa35161411048405272ab192c8",
+      "isBinary": false,
+      "tokens": 192
+    },
+    "slides/01_intro.md": {
+      "mtime": 1765336919286,
+      "size": 381,
+      "contentHash": "fcdf9f97dfe4ef7db1d0e2deaed3daeb9da1a759a1fc2eeceb7cfcff6077e814",
+      "isBinary": false,
+      "tokens": 102
+    },
+    "slides/02_architecture.md": {
+      "mtime": 1765336919384,
+      "size": 1187,
+      "contentHash": "cd8e4db7311fddc43be4baf09aa4c24fcc4f0ecf759fd0433522951dc2aeae62",
+      "isBinary": false,
+      "tokens": 249
+    },
+    "slides/03_features.md": {
+      "mtime": 1765336919477,
+      "size": 669,
+      "contentHash": "4f3db64078504c903e7fb05f03ff6611121513cf305da73319d173e1d06e5c1d",
+      "isBinary": false,
+      "tokens": 170
+    },
+    "slides/04_usage.md": {
+      "mtime": 1765336919576,
+      "size": 582,
+      "contentHash": "3d3e3702263be374b2f9abb4e9b2eba8ea404f3b965972eb41c5805113b7d4a4",
+      "isBinary": false,
+      "tokens": 168
+    },
+    "index.tsx": {
+      "mtime": 1765338896636,
+      "size": 8080,
+      "contentHash": "52cd5ccb132afb07b3fa70473e9106d8e16543667e71cb132bcf15f192cb4af4",
+      "isBinary": false,
+      "tokens": 2105
+    },
+    "README.md": {
+      "mtime": 1765336791386,
+      "size": 225,
+      "contentHash": "36e7f4f737794e85e893f99655a56b08f985f05d5ad716eab9b847894e080137",
+      "isBinary": false,
+      "tokens": 69
+    }
+  }
+}

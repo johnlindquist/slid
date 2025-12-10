@@ -77,7 +77,10 @@ const MarkdownSlide = ({
 }) => {
   const [scrollY, setScrollY] = useState(0);
   const { stdout } = useStdout();
-  const viewportHeight = (stdout?.rows || 24) - 10; // Reserve space for header/footer
+  const terminalWidth = stdout?.columns || 80;
+  const terminalHeight = stdout?.rows || 24;
+  const viewportHeight = terminalHeight - 10; // Reserve space for header/footer
+  const contentWidth = Math.min(terminalWidth - 8, 100); // Fixed width with max cap
 
   useInput((input, key) => {
     if (!isActive) return;
@@ -103,8 +106,8 @@ const MarkdownSlide = ({
   const visibleLines = contentLines.slice(scrollY, scrollY + viewportHeight);
 
   return (
-    <Box flexDirection="column" alignItems="center" justifyContent="center" flexGrow={1}>
-      <Box flexDirection="column" alignItems="center" marginBottom={1}>
+    <Box flexDirection="column" alignItems="center" flexGrow={1} paddingTop={2} width="100%">
+      <Box flexDirection="column" alignItems="center" marginBottom={1} width={contentWidth}>
         <Gradient name="cristal">
           <BigText text={bigHeader} font="tiny" />
         </Gradient>
@@ -112,17 +115,17 @@ const MarkdownSlide = ({
 
       <Box
         height={viewportHeight}
+        width={contentWidth}
         flexDirection="column"
         borderStyle="round"
         borderColor="gray"
         paddingX={1}
         overflow="hidden"
-        alignItems="center"
       >
         <Text>{visibleLines.join('\n')}</Text>
       </Box>
 
-      <Box marginTop={1} justifyContent="center">
+      <Box marginTop={1} justifyContent="center" width={contentWidth}>
         <Text dimColor>
           {scrollY > 0 ? '↑ ' : '  '} Line: {scrollY + 1}/
           {Math.max(1, contentLines.length)}{' '}
@@ -202,19 +205,7 @@ const App = ({
 
   return (
     <Box flexDirection="column" height="100%">
-      <Box
-        justifyContent="space-between"
-        paddingX={2}
-        borderStyle="single"
-        borderColor="blue"
-      >
-        <Text color="blue">Terminal Slides</Text>
-        <Text>
-          Slide {index + 1}/{slides.length}
-        </Text>
-      </Box>
-
-      <Box flexGrow={1} alignItems="center" justifyContent="center">
+      <Box flexGrow={1} alignItems="center">
         {currentSlide.type === 'markdown' ? (
           <MarkdownSlide slide={currentSlide} isActive={true} />
         ) : (
@@ -222,8 +213,9 @@ const App = ({
         )}
       </Box>
 
-      <Box paddingX={2} borderStyle="single" borderColor="gray">
+      <Box justifyContent="space-between" paddingX={2} borderStyle="single" borderColor="gray">
         <Text dimColor>←/→ Nav | ↑/↓/Space: Scroll | q: Quit</Text>
+        <Text dimColor>Slide {index + 1}/{slides.length}</Text>
       </Box>
     </Box>
   );
