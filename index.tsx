@@ -53,6 +53,8 @@ type AppAction =
   | { type: 'quit' }
   | { type: 'play'; path: string; slideIndex: number };
 
+type AppMode = 'presentation' | 'overview';
+
 // --- CLI Argument Parsing ---
 interface ParsedArgs {
   slidesDir: string;
@@ -413,6 +415,121 @@ const getSlideSteps = (slide: Slide): number => {
   return Math.max(1, fragments.length);
 };
 
+// --- Component: Overview Mode ---
+const OverviewMode = ({
+  slides,
+  currentIndex,
+  selectedIndex,
+  onSelect,
+}: {
+  slides: Slide[];
+  currentIndex: number;
+  selectedIndex: number;
+  onSelect: (index: number) => void;
+}) => {
+  const { stdout } = useStdout();
+  const terminalWidth = stdout?.columns || 80;
+  const terminalHeight = stdout?.rows || 24;
+
+  // Calculate grid dimensions
+  const itemWidth = 30;
+  const itemHeight = 3;
+  const columns = Math.max(1, Math.floor((terminalWidth - 4) / (itemWidth + 2)));
+  const maxRows = Math.floor((terminalHeight - 8) / itemHeight);
+  const maxVisibleSlides = columns * maxRows;
+
+  // Calculate scroll offset if needed
+  const selectedRow = Math.floor(selectedIndex / columns);
+  const startRow = Math.max(0, selectedRow - Math.floor(maxRows / 2));
+  const startIndex = startRow * columns;
+  const visibleSlides = slides.slice(startIndex, startIndex + maxVisibleSlides);
+
+  // Group slides into rows
+  const rows: Slide[][] = [];
+  for (let i = 0; i < visibleSlides.length; i += columns) {
+    rows.push(visibleSlides.slice(i, i + columns));
+  }
+
+  useInput((input, key) => {
+    if (key.upArrow) {
+      const newIndex = Math.max(0, selectedIndex - columns);
+      onSelect(newIndex);
+    }
+    if (key.downArrow) {
+      const newIndex = Math.min(slides.length - 1, selectedIndex + columns);
+      onSelect(newIndex);
+    }
+    if (key.leftArrow) {
+      const newIndex = Math.max(0, selectedIndex - 1);
+      onSelect(newIndex);
+    }
+    if (key.rightArrow) {
+      const newIndex = Math.min(slides.length - 1, selectedIndex + 1);
+      onSelect(newIndex);
+    }
+  });
+
+  return (
+    <Box flexDirection="column" padding={1}>
+      <Box marginBottom={1} justifyContent="center">
+        <Gradient name="rainbow">
+          <Text bold>SLIDE OVERVIEW</Text>
+        </Gradient>
+        <Text dimColor> ({slides.length} slides)</Text>
+      </Box>
+
+      <Box flexDirection="column">
+        {rows.map((row, rowIndex) => (
+          <Box key={`row-${startIndex + rowIndex * columns}`}>
+            {row.map((slide, colIndex) => {
+              const absoluteIndex = startIndex + rowIndex * columns + colIndex;
+              const isSelected = absoluteIndex === selectedIndex;
+              const isCurrent = absoluteIndex === currentIndex;
+              const slideNum = absoluteIndex + 1;
+
+              return (
+                <Box
+                  key={`slide-${slide.filename}`}
+                  width={itemWidth}
+                  borderStyle={isSelected ? 'bold' : 'single'}
+                  borderColor={isSelected ? 'cyan' : isCurrent ? 'green' : 'gray'}
+                  paddingX={1}
+                  marginRight={1}
+                >
+                  <Box flexDirection="column">
+                    <Box>
+                      <Text color={isSelected ? 'cyan' : isCurrent ? 'green' : 'white'} bold={isSelected}>
+                        {slideNum.toString().padStart(2, '0')}
+                      </Text>
+                      <Text dimColor> {slide.type === 'cast' ? '[DEMO]' : ''}</Text>
+                    </Box>
+                    <Text
+                      color={isSelected ? 'cyan' : 'white'}
+                      wrap="truncate"
+                    >
+                      {slide.title.length > itemWidth - 6
+                        ? slide.title.slice(0, itemWidth - 9) + '...'
+                        : slide.title}
+                    </Text>
+                  </Box>
+                </Box>
+              );
+            })}
+          </Box>
+        ))}
+      </Box>
+
+      {slides.length > maxVisibleSlides && (
+        <Box marginTop={1} justifyContent="center">
+          <Text dimColor>
+            Showing {startIndex + 1}-{Math.min(startIndex + maxVisibleSlides, slides.length)} of {slides.length}
+          </Text>
+        </Box>
+      )}
+    </Box>
+  );
+};
+
 // --- React App (The UI) ---
 const App = ({
   slides: initialSlides,
@@ -429,6 +546,8 @@ const App = ({
   const { slides, reloadCount } = useSlideWatcher(initialSlides, slidesDir);
   const [index, setIndex] = useState(initialIndex);
   const [step, setStep] = useState(0);
+  const [mode, setMode] = useState<AppMode>('presentation');
+  const [overviewSelectedIndex, setOverviewSelectedIndex] = useState(initialIndex);
 
   // Adjust index if current slide no longer exists after reload
   useEffect(() => {
@@ -457,6 +576,33 @@ const App = ({
   }, [index]);
 
   useInput((input, key) => {
+    // Handle mode toggle with Tab or 'g'
+    if (key.tab || input === 'g') {
+      if (mode === 'presentation') {
+        setMode('overview');
+        setOverviewSelectedIndex(index);
+      } else {
+        setMode('presentation');
+      }
+      return;
+    }
+
+    if (mode === 'overview') {
+      // Overview mode controls
+      if (key.escape) {
+        setMode('presentation');
+        return;
+      }
+      if (key.return) {
+        setIndex(overviewSelectedIndex);
+        setMode('presentation');
+        return;
+      }
+      // Arrow navigation is handled by OverviewMode component
+      return;
+    }
+
+    // Presentation mode controls
     if (key.escape || input === 'q') {
       onExit({ type: 'quit' });
       exit();
@@ -465,10 +611,8 @@ const App = ({
     // Right arrow: advance step or go to next slide
     if (key.rightArrow) {
       if (step < totalSteps - 1) {
-        // More steps remain on current slide - reveal next fragment
         setStep(s => s + 1);
       } else {
-        // All steps visible - move to next slide
         if (index < slides.length - 1) {
           setIndex(i => i + 1);
         }
@@ -478,15 +622,12 @@ const App = ({
     // Left arrow: go back a step or to previous slide
     if (key.leftArrow) {
       if (step > 0) {
-        // Hide last fragment
         setStep(s => s - 1);
       } else {
-        // Go to previous slide (showing all its steps)
         if (index > 0) {
           const prevSlide = slides[index - 1];
           const prevSteps = getSlideSteps(prevSlide);
           setIndex(i => i - 1);
-          // Show all steps of previous slide
           setTimeout(() => setStep(prevSteps - 1), 0);
         }
       }
@@ -496,13 +637,33 @@ const App = ({
   const handlePlay = () => {
     if (currentSlide.type === 'cast') {
       onExit({ type: 'play', path: currentSlide.path, slideIndex: index });
-      exit(); // Quit React so Asciinema can take over
+      exit();
     }
   };
 
   const handleStepChange = useCallback((newStep: number) => {
     setStep(newStep);
   }, []);
+
+  // Overview mode view
+  if (mode === 'overview') {
+    return (
+      <Box flexDirection="column" height="100%">
+        <Box flexGrow={1}>
+          <OverviewMode
+            slides={slides}
+            currentIndex={index}
+            selectedIndex={overviewSelectedIndex}
+            onSelect={setOverviewSelectedIndex}
+          />
+        </Box>
+        <Box justifyContent="space-between" paddingX={2} borderStyle="single" borderColor="cyan">
+          <Text color="cyan">↑/↓/←/→ Navigate | Enter: Jump | Tab/Esc: Exit Overview</Text>
+          <Text color="cyan">Selected: {overviewSelectedIndex + 1}/{slides.length}</Text>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box flexDirection="column" height="100%">
@@ -521,7 +682,7 @@ const App = ({
       </Box>
 
       <Box justifyContent="space-between" paddingX={2} borderStyle="single" borderColor="gray">
-        <Text dimColor>←/→ Nav/Reveal | ↑/↓/Space: Scroll | q: Quit</Text>
+        <Text dimColor>←/→ Nav/Reveal | ↑/↓/Space: Scroll | Tab/g: Overview | q: Quit</Text>
         <Box>
           {reloadCount > 0 && <Text color="green" dimColor>[Live] </Text>}
           <Text dimColor>Slide {index + 1}/{slides.length}</Text>
