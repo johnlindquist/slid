@@ -32,3 +32,10 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Finder (MacOS) folder config
 .DS_Store
+
+# Built binaries
+slides-cli
+slides-cli-darwin-arm64
+slides-cli-darwin-x64
+slides-cli-linux-x64
+slides-cli.exe
