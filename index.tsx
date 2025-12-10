@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { render, Box, Text, useInput, useApp, useStdout } from 'ink';
 import BigText from 'ink-big-text';
 import Gradient from 'ink-gradient';
@@ -19,6 +19,7 @@ marked.setOptions({
 
 // --- Configuration ---
 const SLIDES_DIR = './slides';
+const SLIDES_DIR_ABS = path.resolve(SLIDES_DIR);
 
 // --- Types ---
 type Slide =
@@ -173,9 +174,63 @@ const CastSlide = ({
   );
 };
 
+// --- Hook: useSlideWatcher ---
+// Watches the slides directory and reloads slides when files change
+const useSlideWatcher = (initialSlides: Slide[]) => {
+  const [slides, setSlides] = useState<Slide[]>(initialSlides);
+  const [reloadCount, setReloadCount] = useState(0);
+  const watcherRef = useRef<fs.FSWatcher | null>(null);
+
+  const reloadSlides = useCallback(() => {
+    try {
+      const newSlides = loadSlides();
+      setSlides(newSlides);
+      setReloadCount((c) => c + 1);
+    } catch (e) {
+      // Keep existing slides if reload fails
+    }
+  }, []);
+
+  useEffect(() => {
+    // Debounce mechanism to avoid multiple rapid reloads
+    let debounceTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    const handleChange = (event: fs.WatchEventType, filename: string | null) => {
+      // Only react to .md and .cast files
+      if (filename && (filename.endsWith('.md') || filename.endsWith('.cast'))) {
+        if (debounceTimeout) {
+          clearTimeout(debounceTimeout);
+        }
+        debounceTimeout = setTimeout(() => {
+          reloadSlides();
+        }, 100); // 100ms debounce
+      }
+    };
+
+    // Start watching the slides directory
+    try {
+      watcherRef.current = fs.watch(SLIDES_DIR_ABS, { persistent: true }, handleChange);
+    } catch (e) {
+      // Directory might not exist yet, will be created by loadSlides
+    }
+
+    return () => {
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+      }
+      if (watcherRef.current) {
+        watcherRef.current.close();
+        watcherRef.current = null;
+      }
+    };
+  }, [reloadSlides]);
+
+  return { slides, reloadCount };
+};
+
 // --- React App (The UI) ---
 const App = ({
-  slides,
+  slides: initialSlides,
   initialIndex,
   onExit,
 }: {
@@ -184,7 +239,27 @@ const App = ({
   onExit: (a: AppAction) => void;
 }) => {
   const { exit } = useApp();
+  const { slides, reloadCount } = useSlideWatcher(initialSlides);
   const [index, setIndex] = useState(initialIndex);
+
+  // Adjust index if current slide no longer exists after reload
+  useEffect(() => {
+    if (index >= slides.length) {
+      setIndex(Math.max(0, slides.length - 1));
+    }
+  }, [slides.length, index]);
+
+  // Handle empty slides directory
+  if (slides.length === 0) {
+    return (
+      <Box flexDirection="column" padding={2}>
+        <Text color="yellow">No slides found in {SLIDES_DIR}/</Text>
+        <Text dimColor>Add .md or .cast files to the slides directory.</Text>
+        <Text dimColor>Press q to quit.</Text>
+      </Box>
+    );
+  }
+
   const currentSlide = slides[index];
 
   useInput((input, key) => {
@@ -215,7 +290,10 @@ const App = ({
 
       <Box justifyContent="space-between" paddingX={2} borderStyle="single" borderColor="gray">
         <Text dimColor>←/→ Nav | ↑/↓/Space: Scroll | q: Quit</Text>
-        <Text dimColor>Slide {index + 1}/{slides.length}</Text>
+        <Box>
+          {reloadCount > 0 && <Text color="green" dimColor>[Live] </Text>}
+          <Text dimColor>Slide {index + 1}/{slides.length}</Text>
+        </Box>
       </Box>
     </Box>
   );
