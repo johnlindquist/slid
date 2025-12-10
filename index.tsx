@@ -1,5 +1,32 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { render, Box, Text, useInput, useApp, useStdout } from 'ink';
+
+// Custom hook for reactive terminal dimensions
+const useTerminalSize = () => {
+  const { stdout } = useStdout();
+  const getSize = useCallback(() => ({
+    width: stdout?.columns || process.stdout.columns || 80,
+    height: stdout?.rows || process.stdout.rows || 24,
+  }), [stdout]);
+
+  const [size, setSize] = useState(getSize);
+
+  useEffect(() => {
+    // Update immediately in case stdout became available
+    setSize(getSize());
+
+    const handleResize = () => setSize(getSize());
+
+    // Listen for resize events
+    process.stdout.on('resize', handleResize);
+
+    return () => {
+      process.stdout.off('resize', handleResize);
+    };
+  }, [stdout, getSize]);
+
+  return size;
+};
 import BigText from 'ink-big-text';
 import Gradient from 'ink-gradient';
 import { globSync } from 'glob';
@@ -420,13 +447,11 @@ const MarkdownSlide = ({
   const [processedContent, setProcessedContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const contentLinesRef = useRef<number>(0);
-  const { stdout } = useStdout();
-  const terminalWidth = stdout?.columns || 80;
-  const terminalHeight = stdout?.rows || 24;
+  const { width: terminalWidth, height: terminalHeight } = useTerminalSize();
   // Calculate viewport: terminal height - app footer(1) - header(~4 for BigText or 3 for text) - scroll indicator(1)
   const headerHeight = 4; // BigText "tiny" is about 4 lines, fallback text is 3
   const viewportHeight = Math.max(5, terminalHeight - headerHeight - 2);
-  const contentWidth = Math.min(terminalWidth - 4, 120); // More width, less padding
+  const contentWidth = Math.min(terminalWidth - 4, 80); // Cap at 80 for visible centering
 
   useInput((input, key) => {
     if (!isActive) return;
@@ -671,9 +696,7 @@ const OverviewMode = ({
   selectedIndex: number;
   onSelect: (index: number) => void;
 }) => {
-  const { stdout } = useStdout();
-  const terminalWidth = stdout?.columns || 80;
-  const terminalHeight = stdout?.rows || 24;
+  const { width: terminalWidth, height: terminalHeight } = useTerminalSize();
 
   // Calculate grid dimensions
   const itemWidth = 30;
@@ -916,15 +939,13 @@ const App = ({
     );
   }
 
-  const { stdout } = useStdout();
-  const terminalWidth = stdout?.columns || 80;
-  const terminalHeight = stdout?.rows || 24;
+  const { width: terminalWidth, height: terminalHeight } = useTerminalSize();
   // Reserve 3 lines for footer (separator + nav + spacing)
   const contentHeight = terminalHeight - 3;
 
   return (
-    <Box flexDirection="column" height={terminalHeight}>
-      <Box height={contentHeight} width="100%">
+    <Box flexDirection="column">
+      <Box height={contentHeight} justifyContent="center">
         {currentSlide.type === 'markdown' ? (
           <MarkdownSlide
             slide={currentSlide}
