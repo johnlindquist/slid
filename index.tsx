@@ -535,12 +535,12 @@ const MarkdownSlide = ({
       </Box>
 
       <Box marginTop={1} justifyContent="space-between" width={contentWidth} paddingX={1}>
-        <Text dimColor>
-          {scrollY > 0 ? '↑ ' : '  '} Line: {scrollY + 1}/
-          {Math.max(1, contentLines.length)}{' '}
-          {scrollY + viewportHeight < contentLines.length ? ' ↓' : '  '}
-          {isLoading ? ' (loading images...)' : ''}
-        </Text>
+        <Box>
+          <Text dimColor>{scrollY > 0 ? '↑ more above' : ''}</Text>
+          {scrollY > 0 && scrollY + viewportHeight < contentLines.length && <Text dimColor>  </Text>}
+          <Text dimColor>{scrollY + viewportHeight < contentLines.length ? '↓ more below' : ''}</Text>
+          {isLoading && <Text dimColor> (loading...)</Text>}
+        </Box>
         {totalSteps > 1 && (
           <Text color="cyan">
             Step {step + 1}/{totalSteps}
