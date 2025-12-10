@@ -521,7 +521,7 @@ const MarkdownSlide = ({
   const visibleLines = contentLines.slice(scrollY, scrollY + viewportHeight);
 
   return (
-    <Box justifyContent="center" width="100%">
+    <Box justifyContent="center" width={terminalWidth}>
       <Box flexDirection="column" width={contentWidth}>
         <Box flexDirection="column" alignItems="center">
           {useBigText ? (
