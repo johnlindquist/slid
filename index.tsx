@@ -8,6 +8,7 @@ import path from 'node:path';
 import { spawnSync } from 'bun';
 import { marked } from 'marked';
 import TerminalRenderer from 'marked-terminal';
+import type { ServerWebSocket } from 'bun';
 
 // Configure marked for terminal output
 marked.setOptions({
@@ -19,15 +20,41 @@ marked.setOptions({
 
 // --- Configuration ---
 const SLIDES_DIR = './slides';
+const PRESENTER_PORT = 3333;
+
+// --- CLI Args ---
+const args = process.argv.slice(2);
+const presenterMode = args.includes('--presenter');
 
 // --- Types ---
 type Slide =
-  | { type: 'markdown'; content: string; title: string; filename: string }
-  | { type: 'cast'; path: string; title: string; filename: string };
+  | { type: 'markdown'; content: string; title: string; filename: string; notes: string }
+  | { type: 'cast'; path: string; title: string; filename: string; notes: string };
 
 type AppAction =
   | { type: 'quit' }
   | { type: 'play'; path: string; slideIndex: number };
+
+// --- Presenter Mode Types ---
+type PresenterMessage = {
+  type: 'slide';
+  slideIndex: number;
+  totalSlides: number;
+  title: string;
+  notes: string;
+  nextTitle: string | null;
+};
+
+// --- Helper: Parse Speaker Notes ---
+const parseNotes = (content: string): string => {
+  const notesMatch = content.match(/<!--\s*notes:\s*([\s\S]*?)\s*-->/i);
+  return notesMatch ? notesMatch[1].trim() : '';
+};
+
+// --- Helper: Remove Notes from Content ---
+const stripNotes = (content: string): string => {
+  return content.replace(/<!--\s*notes:\s*[\s\S]*?\s*-->/gi, '').trim();
+};
 
 // --- Helper: Load Slides ---
 const loadSlides = (): Slide[] => {
@@ -51,13 +78,17 @@ const loadSlides = (): Slide[] => {
         .replace(/[_-]/g, ' ');
 
       if (ext === '.cast') {
-        return { type: 'cast', path: filePath, title, filename };
+        return { type: 'cast', path: filePath, title, filename, notes: '' };
       }
+      const rawContent = fs.readFileSync(filePath, 'utf-8');
+      const notes = parseNotes(rawContent);
+      const content = stripNotes(rawContent);
       return {
         type: 'markdown',
-        content: fs.readFileSync(filePath, 'utf-8'),
+        content,
         title,
         filename,
+        notes,
       };
     });
 };
@@ -178,14 +209,21 @@ const App = ({
   slides,
   initialIndex,
   onExit,
+  onSlideChange,
 }: {
   slides: Slide[];
   initialIndex: number;
   onExit: (a: AppAction) => void;
+  onSlideChange?: (index: number) => void;
 }) => {
   const { exit } = useApp();
   const [index, setIndex] = useState(initialIndex);
   const currentSlide = slides[index];
+
+  // Notify presenter view of slide changes
+  useEffect(() => {
+    onSlideChange?.(index);
+  }, [index, onSlideChange]);
 
   useInput((input, key) => {
     if (key.escape || input === 'q') {
@@ -221,19 +259,117 @@ const App = ({
   );
 };
 
+// --- Presenter Mode: WebSocket Server ---
+let presenterServer: ReturnType<typeof Bun.serve> | null = null;
+const connectedClients = new Set<ServerWebSocket<unknown>>();
+let presentationStartTime: number | null = null;
+
+const startPresenterServer = (slides: Slide[]) => {
+  const presenterHtml = fs.readFileSync(
+    path.join(import.meta.dir, 'presenter.html'),
+    'utf-8'
+  );
+
+  presenterServer = Bun.serve({
+    port: PRESENTER_PORT,
+    fetch(req, server) {
+      const url = new URL(req.url);
+
+      // WebSocket upgrade
+      if (url.pathname === '/ws') {
+        const upgraded = server.upgrade(req);
+        if (!upgraded) {
+          return new Response('WebSocket upgrade failed', { status: 400 });
+        }
+        return;
+      }
+
+      // Serve presenter HTML
+      return new Response(presenterHtml, {
+        headers: { 'Content-Type': 'text/html' },
+      });
+    },
+    websocket: {
+      open(ws) {
+        connectedClients.add(ws);
+        // Send init message with start time
+        if (presentationStartTime) {
+          ws.send(JSON.stringify({ type: 'init', startTime: presentationStartTime }));
+        }
+      },
+      close(ws) {
+        connectedClients.delete(ws);
+      },
+      message() {
+        // No incoming messages expected
+      },
+    },
+  });
+
+  presentationStartTime = Date.now();
+  console.log(`\x1b[36m[Presenter Mode]\x1b[0m Open in browser: \x1b[33mhttp://localhost:${PRESENTER_PORT}\x1b[0m`);
+  console.log('\x1b[2mPress any key to start presentation...\x1b[0m');
+
+  // Wait for keypress before starting
+  const buf = new Uint8Array(10);
+  fs.readSync(process.stdin.fd, buf);
+};
+
+const broadcastSlideChange = (slides: Slide[], index: number) => {
+  const currentSlide = slides[index];
+  const nextSlide = slides[index + 1];
+
+  const message: PresenterMessage = {
+    type: 'slide',
+    slideIndex: index,
+    totalSlides: slides.length,
+    title: currentSlide.title,
+    notes: currentSlide.notes,
+    nextTitle: nextSlide?.title || null,
+  };
+
+  const messageStr = JSON.stringify(message);
+  for (const client of connectedClients) {
+    client.send(messageStr);
+  }
+};
+
+const stopPresenterServer = () => {
+  if (presenterServer) {
+    presenterServer.stop();
+    presenterServer = null;
+  }
+  connectedClients.clear();
+};
+
 // --- Supervisor (The Main Loop) ---
 async function main() {
   const slides = loadSlides();
   let currentIndex = 0;
   let running = true;
 
+  // Start presenter server if --presenter flag is provided
+  if (presenterMode) {
+    startPresenterServer(slides);
+  }
+
   while (running) {
     console.clear();
+
+    // Create slide change handler for presenter mode
+    const handleSlideChange = presenterMode
+      ? (index: number) => broadcastSlideChange(slides, index)
+      : undefined;
 
     // 1. Run the React App and wait for it to exit with an action
     const action = await new Promise<AppAction>((resolve) => {
       const instance = render(
-        <App slides={slides} initialIndex={currentIndex} onExit={resolve} />
+        <App
+          slides={slides}
+          initialIndex={currentIndex}
+          onExit={resolve}
+          onSlideChange={handleSlideChange}
+        />
       );
       // Fallback if the app exits without calling onExit (e.g. Ctrl+C)
       instance.waitUntilExit().then(() => resolve({ type: 'quit' }));
@@ -243,6 +379,7 @@ async function main() {
     if (action.type === 'quit') {
       running = false;
       console.clear();
+      stopPresenterServer();
     } else if (action.type === 'play') {
       // Clean up the terminal before starting asciinema
       console.clear();
