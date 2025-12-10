@@ -423,9 +423,10 @@ const MarkdownSlide = ({
   const { stdout } = useStdout();
   const terminalWidth = stdout?.columns || 80;
   const terminalHeight = stdout?.rows || 24;
-  // Calculate viewport: terminal height - footer(3) - BigText header(~5) - padding/borders(~6)
-  const viewportHeight = Math.max(5, terminalHeight - 14);
-  const contentWidth = Math.min(terminalWidth - 8, 100); // Fixed width with max cap
+  // Calculate viewport: terminal height - app footer(1) - header(~4 for BigText or 3 for text) - scroll indicator(1)
+  const headerHeight = 4; // BigText "tiny" is about 4 lines, fallback text is 3
+  const viewportHeight = Math.max(5, terminalHeight - headerHeight - 2);
+  const contentWidth = Math.min(terminalWidth - 4, 120); // More width, less padding
 
   useInput((input, key) => {
     if (!isActive) return;
@@ -521,7 +522,7 @@ const MarkdownSlide = ({
 
   return (
     <Box flexDirection="column" alignItems="center" width="100%">
-      <Box flexDirection="column" alignItems="center" marginBottom={1} width={contentWidth}>
+      <Box flexDirection="column" alignItems="center" width={contentWidth}>
         {useBigText ? (
           <Gradient name="cristal">
             <BigText text={headerText} font="tiny" />
@@ -539,26 +540,19 @@ const MarkdownSlide = ({
         height={viewportHeight}
         width={contentWidth}
         flexDirection="column"
-        borderStyle="round"
-        borderColor="gray"
-        paddingX={1}
+        paddingX={2}
         overflow="hidden"
       >
         <Text>{visibleLines.join('\n')}</Text>
       </Box>
 
-      <Box marginTop={1} justifyContent="space-between" width={contentWidth} paddingX={1}>
-        <Box>
-          <Text dimColor>{scrollY > 0 ? '↑ more above' : ''}</Text>
-          {scrollY > 0 && scrollY + viewportHeight < contentLines.length && <Text dimColor>  </Text>}
-          <Text dimColor>{scrollY + viewportHeight < contentLines.length ? '↓ more below' : ''}</Text>
-          {isLoading && <Text dimColor> (loading...)</Text>}
-        </Box>
-        {totalSteps > 1 && (
-          <Text color="cyan">
-            Step {step + 1}/{totalSteps}
-          </Text>
-        )}
+      <Box justifyContent="space-between" width={contentWidth} paddingX={2}>
+        <Text dimColor>
+          {scrollY > 0 ? '↑' : ' '}
+          {scrollY + viewportHeight < contentLines.length ? '↓' : ' '}
+          {isLoading ? ' …' : ''}
+        </Text>
+        {totalSteps > 1 && <Text dimColor>Step {step + 1}/{totalSteps}</Text>}
       </Box>
     </Box>
   );
@@ -942,12 +936,9 @@ const App = ({
         )}
       </Box>
 
-      <Box justifyContent="space-between" paddingX={2} borderStyle="single" borderColor="gray">
-        <Text dimColor>←/→ Nav/Reveal | ↑/↓/Space: Scroll | Tab/g: Overview | q: Quit</Text>
-        <Box>
-          {reloadCount > 0 && <Text color="green" dimColor>[Live] </Text>}
-          <Text dimColor>Slide {index + 1}/{slides.length}</Text>
-        </Box>
+      <Box justifyContent="space-between" paddingX={2}>
+        <Text dimColor>←→ nav  ↑↓ scroll  Tab overview  q quit</Text>
+        <Text dimColor>{reloadCount > 0 ? '● ' : ''}{index + 1}/{slides.length}</Text>
       </Box>
     </Box>
   );
