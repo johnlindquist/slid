@@ -521,38 +521,39 @@ const MarkdownSlide = ({
   const visibleLines = contentLines.slice(scrollY, scrollY + viewportHeight);
 
   return (
-    <Box flexDirection="column" alignItems="center" width="100%">
-      <Box flexDirection="column" alignItems="center" width={contentWidth}>
-        {useBigText ? (
-          <Gradient name="cristal">
-            <BigText text={headerText} font="tiny" />
-          </Gradient>
-        ) : (
-          <Text bold color="cyan">
-            {'═'.repeat(Math.min(headerText.length + 4, contentWidth))}
-            {'\n  '}{headerText}{'  \n'}
-            {'═'.repeat(Math.min(headerText.length + 4, contentWidth))}
+    <Box justifyContent="center" width="100%">
+      <Box flexDirection="column" width={contentWidth}>
+        <Box flexDirection="column" alignItems="center">
+          {useBigText ? (
+            <Gradient name="cristal">
+              <BigText text={headerText} font="tiny" />
+            </Gradient>
+          ) : (
+            <Text bold color="cyan">
+              {'═'.repeat(Math.min(headerText.length + 4, contentWidth))}
+              {'\n  '}{headerText}{'  \n'}
+              {'═'.repeat(Math.min(headerText.length + 4, contentWidth))}
+            </Text>
+          )}
+        </Box>
+
+        <Box
+          height={viewportHeight}
+          flexDirection="column"
+          paddingX={2}
+          overflow="hidden"
+        >
+          <Text>{visibleLines.join('\n')}</Text>
+        </Box>
+
+        <Box justifyContent="space-between" paddingX={2}>
+          <Text dimColor>
+            {scrollY > 0 ? '↑' : ' '}
+            {scrollY + viewportHeight < contentLines.length ? '↓' : ' '}
+            {isLoading ? ' …' : ''}
           </Text>
-        )}
-      </Box>
-
-      <Box
-        height={viewportHeight}
-        width={contentWidth}
-        flexDirection="column"
-        paddingX={2}
-        overflow="hidden"
-      >
-        <Text>{visibleLines.join('\n')}</Text>
-      </Box>
-
-      <Box justifyContent="space-between" width={contentWidth} paddingX={2}>
-        <Text dimColor>
-          {scrollY > 0 ? '↑' : ' '}
-          {scrollY + viewportHeight < contentLines.length ? '↓' : ' '}
-          {isLoading ? ' …' : ''}
-        </Text>
-        {totalSteps > 1 && <Text dimColor>Step {step + 1}/{totalSteps}</Text>}
+          {totalSteps > 1 && <Text dimColor>Step {step + 1}/{totalSteps}</Text>}
+        </Box>
       </Box>
     </Box>
   );
