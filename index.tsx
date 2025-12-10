@@ -442,7 +442,12 @@ const MarkdownSlide = ({
   const lines = slide.content.split('\n');
   const contentHeader = lines.find((l) => l.startsWith('# '))?.replace('# ', '');
   // Prefer frontmatter title (already in slide.title if set), then content header, then filename-derived title
-  const bigHeader = slide.metadata.title || contentHeader || slide.title;
+  const headerText = slide.metadata.title || contentHeader || slide.title;
+
+  // BigText "tiny" font uses ~5 chars width per character
+  // If header is too long, fall back to regular styled text
+  const maxBigTextChars = Math.floor(terminalWidth / 5) - 2;
+  const useBigText = headerText.length <= maxBigTextChars;
 
   // Remove the first header from content for rendering (we show it as BigText)
   const contentWithoutHeader = slide.content.replace(/^#\s+.+\n?/, '');
@@ -517,9 +522,17 @@ const MarkdownSlide = ({
   return (
     <Box flexDirection="column" alignItems="center" width="100%">
       <Box flexDirection="column" alignItems="center" marginBottom={1} width={contentWidth}>
-        <Gradient name="cristal">
-          <BigText text={bigHeader} font="tiny" />
-        </Gradient>
+        {useBigText ? (
+          <Gradient name="cristal">
+            <BigText text={headerText} font="tiny" />
+          </Gradient>
+        ) : (
+          <Text bold color="cyan">
+            {'═'.repeat(Math.min(headerText.length + 4, contentWidth))}
+            {'\n  '}{headerText}{'  \n'}
+            {'═'.repeat(Math.min(headerText.length + 4, contentWidth))}
+          </Text>
+        )}
       </Box>
 
       <Box
