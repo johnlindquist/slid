@@ -1,0 +1,24 @@
+{
+  "name": "slides-cli",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/glob": "^9.0.0",
+    "@types/node": "^24.10.2",
+    "@types/react": "^19.2.7"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "glob": "^13.0.0",
+    "ink": "^6.5.1",
+    "ink-big-text": "^2.0.0",
+    "ink-gradient": "^3.0.0",
+    "marked": "^17.0.1",
+    "marked-terminal": "^7.3.0",
+    "react": "^19.2.1"
+  }
+}
