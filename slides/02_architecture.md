@@ -1,3 +1,10 @@
+---
+title: "Deep Dive: Architecture"
+layout: default
+theme: neon
+notes: "Emphasize the supervisor pattern as the key innovation"
+---
+
 # Architecture
 
 The key insight: **terminal apps fight for control**.
