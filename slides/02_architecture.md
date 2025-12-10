@@ -39,3 +39,5 @@ When running React (Ink) and Asciinema together:
 3. React **restarts** at the same slide
 
 Clean handoffs = reliable presentations.
+
+<!-- notes: This is the core architecture slide. Walk through the diagram slowly. Emphasize that the supervisor pattern is key - React and Asciinema never run simultaneously. The handoff is clean because we completely exit React before starting Asciinema, then restart React at the same slide index. -->

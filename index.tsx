@@ -10,6 +10,7 @@ import { marked } from 'marked';
 import { markedTerminal } from 'marked-terminal';
 import { parseArgs } from 'node:util';
 import matter from 'gray-matter';
+import type { ServerWebSocket } from 'bun';
 
 // Configure marked for terminal output with syntax highlighting
 marked.use(
@@ -32,6 +33,7 @@ const FRAGMENT_SEPARATOR = /<!--\s*fragment\s*-->/gi;
 // --- Configuration ---
 const VERSION = '1.0.0';
 const DEFAULT_SLIDES_DIR = './slides';
+const PRESENTER_PORT = 3333;
 
 // --- Types ---
 type SlideLayout = 'default' | 'center' | 'split';
@@ -46,8 +48,8 @@ type SlideMetadata = {
 };
 
 type Slide =
-  | { type: 'markdown'; content: string; title: string; filename: string; metadata: SlideMetadata }
-  | { type: 'cast'; path: string; title: string; filename: string; metadata: SlideMetadata };
+  | { type: 'markdown'; content: string; title: string; filename: string; metadata: SlideMetadata; notes: string }
+  | { type: 'cast'; path: string; title: string; filename: string; metadata: SlideMetadata; notes: string };
 
 type AppAction =
   | { type: 'quit' }
@@ -55,12 +57,23 @@ type AppAction =
 
 type AppMode = 'presentation' | 'overview';
 
+// --- Presenter Mode Types ---
+type PresenterMessage = {
+  type: 'slide';
+  slideIndex: number;
+  totalSlides: number;
+  title: string;
+  notes: string;
+  nextTitle: string | null;
+};
+
 // --- CLI Argument Parsing ---
 interface ParsedArgs {
   slidesDir: string;
   startAt: number;
   showHelp: boolean;
   showVersion: boolean;
+  presenterMode: boolean;
 }
 
 const showHelp = () => {
@@ -75,6 +88,7 @@ Arguments:
 
 Options:
   -s, --start-at <n>  Start at slide number (1-indexed, default: 1)
+  -p, --presenter     Enable presenter mode with speaker notes
   -h, --help          Show this help message
   -v, --version       Show version number
 
@@ -82,6 +96,7 @@ Examples:
   bun run index.tsx                      # Use ./slides directory
   bun run index.tsx ./my-talk            # Use custom directory
   bun run index.tsx --start-at=5         # Start at slide 5
+  bun run index.tsx --presenter          # Enable presenter mode
   bun run index.tsx ./presentations -s 3 # Custom dir, start at slide 3
 `);
 };
@@ -98,6 +113,10 @@ const parseCliArgs = (): ParsedArgs => {
         'start-at': {
           type: 'string',
           short: 's',
+        },
+        presenter: {
+          type: 'boolean',
+          short: 'p',
         },
         help: {
           type: 'boolean',
@@ -130,6 +149,7 @@ const parseCliArgs = (): ParsedArgs => {
       startAt,
       showHelp: values.help ?? false,
       showVersion: values.version ?? false,
+      presenterMode: values.presenter ?? false,
     };
   } catch (error) {
     if (error instanceof Error) {
@@ -138,6 +158,17 @@ const parseCliArgs = (): ParsedArgs => {
     console.error('Run with --help for usage information.');
     process.exit(1);
   }
+};
+
+// --- Helper: Parse Speaker Notes ---
+const parseNotes = (content: string): string => {
+  const notesMatch = content.match(/<!--\s*notes:\s*([\s\S]*?)\s*-->/i);
+  return notesMatch ? notesMatch[1].trim() : '';
+};
+
+// --- Helper: Remove Notes from Content ---
+const stripNotes = (content: string): string => {
+  return content.replace(/<!--\s*notes:\s*[\s\S]*?\s*-->/gi, '').trim();
 };
 
 // --- Path Validation ---
@@ -185,12 +216,12 @@ const loadSlides = (slidesDir: string): Slide[] => {
         .replace(/[_-]/g, ' ');
 
       if (ext === '.cast') {
-        return { type: 'cast', path: filePath, title: filenameTitle, filename, metadata: {} };
+        return { type: 'cast', path: filePath, title: filenameTitle, filename, metadata: {}, notes: '' };
       }
 
       // Parse frontmatter from markdown files
       const fileContent = fs.readFileSync(filePath, 'utf-8');
-      const { data: frontmatter, content } = matter(fileContent);
+      const { data: frontmatter, content: frontmatterContent } = matter(fileContent);
 
       // Extract metadata with type safety
       const metadata: SlideMetadata = {
@@ -201,6 +232,10 @@ const loadSlides = (slidesDir: string): Slide[] => {
         notes: typeof frontmatter.notes === 'string' ? frontmatter.notes : undefined,
       };
 
+      // Parse speaker notes from content (<!-- notes: ... -->)
+      const notes = parseNotes(frontmatterContent) || metadata.notes || '';
+      const content = stripNotes(frontmatterContent);
+
       // Use frontmatter title if present, otherwise fall back to filename-derived title
       const title = metadata.title || filenameTitle;
 
@@ -210,6 +245,7 @@ const loadSlides = (slidesDir: string): Slide[] => {
         title,
         filename,
         metadata,
+        notes,
       };
     })
     .filter((slide) => !slide.metadata.hidden); // Filter out hidden slides
@@ -536,11 +572,13 @@ const App = ({
   initialIndex,
   slidesDir,
   onExit,
+  onSlideChange,
 }: {
   slides: Slide[];
   initialIndex: number;
   slidesDir: string;
   onExit: (a: AppAction) => void;
+  onSlideChange?: (index: number) => void;
 }) => {
   const { exit } = useApp();
   const { slides, reloadCount } = useSlideWatcher(initialSlides, slidesDir);
@@ -574,6 +612,11 @@ const App = ({
   useEffect(() => {
     setStep(0);
   }, [index]);
+
+  // Notify presenter view of slide changes
+  useEffect(() => {
+    onSlideChange?.(index);
+  }, [index, onSlideChange]);
 
   useInput((input, key) => {
     // Handle mode toggle with Tab or 'g'
@@ -692,6 +735,89 @@ const App = ({
   );
 };
 
+// --- Presenter Mode: WebSocket Server ---
+let presenterServer: ReturnType<typeof Bun.serve> | null = null;
+const connectedClients = new Set<ServerWebSocket<unknown>>();
+let presentationStartTime: number | null = null;
+
+const startPresenterServer = (slides: Slide[]) => {
+  const presenterHtml = fs.readFileSync(
+    path.join(import.meta.dir, 'presenter.html'),
+    'utf-8'
+  );
+
+  presenterServer = Bun.serve({
+    port: PRESENTER_PORT,
+    fetch(req, server) {
+      const url = new URL(req.url);
+
+      // WebSocket upgrade
+      if (url.pathname === '/ws') {
+        const upgraded = server.upgrade(req);
+        if (!upgraded) {
+          return new Response('WebSocket upgrade failed', { status: 400 });
+        }
+        return;
+      }
+
+      // Serve presenter HTML
+      return new Response(presenterHtml, {
+        headers: { 'Content-Type': 'text/html' },
+      });
+    },
+    websocket: {
+      open(ws) {
+        connectedClients.add(ws);
+        // Send init message with start time
+        if (presentationStartTime) {
+          ws.send(JSON.stringify({ type: 'init', startTime: presentationStartTime }));
+        }
+      },
+      close(ws) {
+        connectedClients.delete(ws);
+      },
+      message() {
+        // No incoming messages expected
+      },
+    },
+  });
+
+  presentationStartTime = Date.now();
+  console.log(`\x1b[36m[Presenter Mode]\x1b[0m Open in browser: \x1b[33mhttp://localhost:${PRESENTER_PORT}\x1b[0m`);
+  console.log('\x1b[2mPress any key to start presentation...\x1b[0m');
+
+  // Wait for keypress before starting
+  const buf = new Uint8Array(10);
+  fs.readSync(process.stdin.fd, buf);
+};
+
+const broadcastSlideChange = (slides: Slide[], index: number) => {
+  const currentSlide = slides[index];
+  const nextSlide = slides[index + 1];
+
+  const message: PresenterMessage = {
+    type: 'slide',
+    slideIndex: index,
+    totalSlides: slides.length,
+    title: currentSlide.title,
+    notes: currentSlide.notes,
+    nextTitle: nextSlide?.title || null,
+  };
+
+  const messageStr = JSON.stringify(message);
+  for (const client of connectedClients) {
+    client.send(messageStr);
+  }
+};
+
+const stopPresenterServer = () => {
+  if (presenterServer) {
+    presenterServer.stop();
+    presenterServer = null;
+  }
+  connectedClients.clear();
+};
+
 // --- Supervisor (The Main Loop) ---
 async function main() {
   // Parse CLI arguments
@@ -723,14 +849,31 @@ async function main() {
 
   let currentIndex = args.startAt;
   let running = true;
+  const presenterMode = args.presenterMode;
+
+  // Start presenter server if --presenter flag is provided
+  if (presenterMode) {
+    startPresenterServer(slides);
+  }
 
   while (running) {
     console.clear();
 
+    // Create slide change handler for presenter mode
+    const handleSlideChange = presenterMode
+      ? (index: number) => broadcastSlideChange(slides, index)
+      : undefined;
+
     // 1. Run the React App and wait for it to exit with an action
     const action = await new Promise<AppAction>((resolve) => {
       const instance = render(
-        <App slides={slides} initialIndex={currentIndex} slidesDir={args.slidesDir} onExit={resolve} />
+        <App
+          slides={slides}
+          initialIndex={currentIndex}
+          slidesDir={args.slidesDir}
+          onExit={resolve}
+          onSlideChange={handleSlideChange}
+        />
       );
       // Fallback if the app exits without calling onExit (e.g. Ctrl+C)
       instance.waitUntilExit().then(() => resolve({ type: 'quit' }));
@@ -740,6 +883,7 @@ async function main() {
     if (action.type === 'quit') {
       running = false;
       console.clear();
+      stopPresenterServer();
     } else if (action.type === 'play') {
       // Clean up the terminal before starting asciinema
       console.clear();
