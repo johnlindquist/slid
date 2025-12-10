@@ -419,6 +419,7 @@ const MarkdownSlide = ({
   const [scrollY, setScrollY] = useState(0);
   const [processedContent, setProcessedContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const contentLinesRef = useRef<number>(0);
   const { stdout } = useStdout();
   const terminalWidth = stdout?.columns || 80;
   const terminalHeight = stdout?.rows || 24;
@@ -428,9 +429,10 @@ const MarkdownSlide = ({
 
   useInput((input, key) => {
     if (!isActive) return;
+    const maxScroll = Math.max(0, contentLinesRef.current - viewportHeight);
     if (key.upArrow) setScrollY((y) => Math.max(0, y - 1));
-    if (key.downArrow) setScrollY((y) => y + 1);
-    if (input === ' ') setScrollY((y) => y + 5); // Page down
+    if (key.downArrow) setScrollY((y) => Math.min(maxScroll, y + 1));
+    if (input === ' ') setScrollY((y) => Math.min(maxScroll, y + 5)); // Page down
   });
 
   // Reset scroll on slide change
@@ -505,6 +507,9 @@ const MarkdownSlide = ({
     : processedContent || '';
 
   const contentLines = displayContent.split('\n');
+
+  // Update ref so useInput can access current line count
+  contentLinesRef.current = contentLines.length;
 
   // Get visible lines based on scroll position
   const visibleLines = contentLines.slice(scrollY, scrollY + viewportHeight);
