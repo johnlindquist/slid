@@ -923,7 +923,7 @@ const App = ({
 
   return (
     <Box flexDirection="column" height={terminalHeight}>
-      <Box height={contentHeight} alignItems="flex-start" justifyContent="center">
+      <Box height={contentHeight} alignItems="center" justifyContent="center">
         {currentSlide.type === 'markdown' ? (
           <MarkdownSlide
             slide={currentSlide}
