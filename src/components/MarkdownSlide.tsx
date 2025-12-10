@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef, memo, useMemo } from 'react';
 import { Box, Text, useInput } from 'ink';
 import type { MarkdownSlide as MarkdownSlideType } from '../types/index.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
-import { renderMarkdown, parseFragments } from '../utils/markdown.js';
+import { createMarkdownRenderer, parseFragments } from '../utils/markdown.js';
 import { processMarkdownWithImages, hasImages } from '../utils/images.js';
 import { SlideHeader } from './SlideHeader.js';
 import { ScrollIndicator } from './ScrollIndicator.js';
+import type { AppTheme } from '../utils/themes.js';
 
 // Strip ANSI escape codes to measure actual visible width
 const stripAnsi = (str: string): string =>
@@ -25,6 +26,7 @@ type MarkdownSlideProps = {
   isActive: boolean;
   step: number;
   totalSteps: number;
+  theme: AppTheme;
 };
 
 /**
@@ -35,6 +37,7 @@ export const MarkdownSlide = memo(function MarkdownSlide({
   isActive,
   step,
   totalSteps,
+  theme,
 }: MarkdownSlideProps) {
   const [scrollY, setScrollY] = useState(0);
   const [processedContent, setProcessedContent] = useState<string | null>(null);
@@ -71,12 +74,15 @@ export const MarkdownSlide = memo(function MarkdownSlide({
   const fragments = parseFragments(contentWithoutHeader);
   const visibleContent = fragments.slice(0, step + 1).join('\n\n');
 
-  // Process images asynchronously
+  // Process images asynchronously with themed renderer
   useEffect(() => {
     let cancelled = false;
     setIsLoading(true);
 
     const processContent = async () => {
+      // Create renderer for current theme
+      const render = createMarkdownRenderer(theme);
+
       try {
         const maxImageWidth = Math.min(contentWidth - 4, 80);
         const maxImageHeight = Math.floor(viewportHeight * 0.6);
@@ -89,9 +95,9 @@ export const MarkdownSlide = memo(function MarkdownSlide({
             maxImageWidth,
             maxImageHeight
           );
-          finalContent = renderMarkdown(contentWithImages);
+          finalContent = render(contentWithImages);
         } else {
-          finalContent = renderMarkdown(visibleContent);
+          finalContent = render(visibleContent);
         }
 
         if (!cancelled) {
@@ -100,7 +106,8 @@ export const MarkdownSlide = memo(function MarkdownSlide({
         }
       } catch {
         if (!cancelled) {
-          setProcessedContent(renderMarkdown(visibleContent));
+          const render = createMarkdownRenderer(theme);
+          setProcessedContent(render(visibleContent));
           setIsLoading(false);
         }
       }
@@ -111,7 +118,7 @@ export const MarkdownSlide = memo(function MarkdownSlide({
     return () => {
       cancelled = true;
     };
-  }, [slide.filename, visibleContent, contentWidth, viewportHeight, slide.slideDir]);
+  }, [slide.filename, visibleContent, contentWidth, viewportHeight, slide.slideDir, theme]);
 
   const displayContent = isLoading ? processedContent || 'Loading...' : processedContent || '';
   const contentLines = displayContent.split('\n');
@@ -145,6 +152,7 @@ export const MarkdownSlide = memo(function MarkdownSlide({
           text={headerText}
           terminalWidth={terminalWidth}
           contentWidth={dynamicWidth}
+          theme={theme}
         />
 
         <Box height={viewportHeight} flexDirection="column" alignItems="center" overflow="hidden">
@@ -160,6 +168,7 @@ export const MarkdownSlide = memo(function MarkdownSlide({
           isLoading={isLoading}
           step={step}
           totalSteps={totalSteps}
+          theme={theme}
         />
       </Box>
     </Box>

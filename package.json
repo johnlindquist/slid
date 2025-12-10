@@ -1,18 +1,20 @@
 {
   "name": "slides-cli",
-  "module": "index.ts",
+  "module": "src/index.tsx",
   "type": "module",
   "private": true,
   "bin": {
     "slides-cli": "./slides-cli"
   },
   "scripts": {
-    "start": "bun run index.tsx",
-    "build": "bun build --compile --minify index.tsx --outfile slides-cli",
-    "build:darwin-arm64": "bun build --compile --minify --target=bun-darwin-arm64 index.tsx --outfile slides-cli-darwin-arm64",
-    "build:darwin-x64": "bun build --compile --minify --target=bun-darwin-x64 index.tsx --outfile slides-cli-darwin-x64",
-    "build:linux-x64": "bun build --compile --minify --target=bun-linux-x64 index.tsx --outfile slides-cli-linux-x64",
-    "build:all": "bun run build:darwin-arm64 && bun run build:darwin-x64 && bun run build:linux-x64"
+    "start": "bun run src/index.tsx",
+    "dev": "bun run --watch src/index.tsx",
+    "build": "bun build --compile --minify src/index.tsx --outfile slides-cli",
+    "build:darwin-arm64": "bun build --compile --minify --target=bun-darwin-arm64 src/index.tsx --outfile slides-cli-darwin-arm64",
+    "build:darwin-x64": "bun build --compile --minify --target=bun-darwin-x64 src/index.tsx --outfile slides-cli-darwin-x64",
+    "build:linux-x64": "bun build --compile --minify --target=bun-linux-x64 src/index.tsx --outfile slides-cli-linux-x64",
+    "build:all": "bun run build:darwin-arm64 && bun run build:darwin-x64 && bun run build:linux-x64",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -25,6 +27,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "chalk": "^5.6.2",
     "cli-highlight": "^2.1.11",
     "glob": "^13.0.0",
     "gray-matter": "^4.0.3",
