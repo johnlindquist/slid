@@ -109,3 +109,55 @@ bun --hot ./index.ts
 ```
 
 For more information, read the Bun API docs in `node_modules/bun-types/docs/**.md`.
+
+## Terminal Escape Sequences
+
+When reading raw keyboard input with `fs.readSync()` in raw mode, arrow keys send escape sequences that vary by terminal mode:
+
+### Arrow Keys
+
+| Key   | Normal Mode (ESC [ X) | Application Mode (ESC O X) |
+|-------|----------------------|---------------------------|
+| Up    | `0x1b 0x5b 0x41`     | `0x1b 0x4f 0x41`          |
+| Down  | `0x1b 0x5b 0x42`     | `0x1b 0x4f 0x42`          |
+| Right | `0x1b 0x5b 0x43`     | `0x1b 0x4f 0x43`          |
+| Left  | `0x1b 0x5b 0x44`     | `0x1b 0x4f 0x44`          |
+
+- **Normal mode**: `ESC [` prefix (0x1b 0x5b) - standard ANSI
+- **Application mode**: `ESC O` prefix (0x1b 0x4f) - used by some terminals (e.g., macOS Terminal.app, iTerm2)
+
+Always check for BOTH `0x5b` ('[') and `0x4f` ('O') at position 1 to support all terminals.
+
+### Common Single-Byte Keys
+
+| Key     | Hex    | Decimal |
+|---------|--------|---------|
+| q       | 0x71   | 113     |
+| Q       | 0x51   | 81      |
+| h       | 0x68   | 104     |
+| l       | 0x6c   | 108     |
+| Space   | 0x20   | 32      |
+| Enter   | 0x0d   | 13      |
+| Newline | 0x0a   | 10      |
+| Ctrl+C  | 0x03   | 3       |
+| ESC     | 0x1b   | 27      |
+
+### Reading Escape Sequences
+
+Escape sequences may arrive as:
+1. All bytes in one read (bytesRead=3)
+2. ESC alone, then remaining bytes in second read
+
+Handle both cases:
+```typescript
+const buf = new Uint8Array(10);
+let bytesRead = fs.readSync(process.stdin.fd, buf);
+
+// If we got ESC alone, read more bytes
+if (buf[0] === 0x1b && bytesRead === 1) {
+  const more = new Uint8Array(5);
+  const m = fs.readSync(process.stdin.fd, more);
+  for (let i = 0; i < m; i++) buf[bytesRead + i] = more[i];
+  bytesRead += m;
+}
+```

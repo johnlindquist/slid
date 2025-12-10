@@ -13,10 +13,10 @@ import {
 } from './utils/presenter.js';
 
 /**
- * Wait for a single keypress using blocking read (the original working approach).
- * Returns: 'next', 'prev', 'quit', or 'replay'
+ * Wait for a single keypress using blocking read.
+ * Returns: 'next', 'prev', or 'back' (to placeholder)
  */
-function waitForKey(): 'next' | 'prev' | 'quit' | 'replay' {
+function waitForKey(): 'next' | 'prev' | 'back' {
   // Set raw mode to get single keypress
   if (process.stdin.isTTY) {
     process.stdin.setRawMode(true);
@@ -29,10 +29,8 @@ function waitForKey(): 'next' | 'prev' | 'quit' | 'replay' {
 
   // If we got an escape character, read more bytes for the full sequence
   if (first === 0x1b && bytesRead === 1) {
-    // Read the rest of the escape sequence
     const moreBuf = new Uint8Array(5);
     const moreBytes = fs.readSync(process.stdin.fd, moreBuf);
-    // Copy to main buffer
     for (let i = 0; i < moreBytes; i++) {
       buf[bytesRead + i] = moreBuf[i];
     }
@@ -44,7 +42,7 @@ function waitForKey(): 'next' | 'prev' | 'quit' | 'replay' {
     process.stdin.setRawMode(false);
   }
 
-  if (bytesRead === 0) return 'replay'; // EOF, stay on slide
+  if (bytesRead === 0) return 'back'; // EOF, go back to placeholder
 
   // Check for escape sequence (arrow keys)
   // Normal mode: ESC [ C/D (0x1b 0x5b 0x43/0x44)
@@ -54,15 +52,11 @@ function waitForKey(): 'next' | 'prev' | 'quit' | 'replay' {
     if (buf[2] === 0x44) return 'prev';  // Left arrow
   }
 
-  // Single character keys
-  if (first === 0x71 || first === 0x51) return 'quit';   // q or Q
-  if (first === 0x6c || first === 0x4c) return 'next';   // l or L
-  if (first === 0x68 || first === 0x48) return 'prev';   // h or H
-  if (first === 0x20 || first === 0x72 || first === 0x52) return 'replay'; // Space, r, R
-  if (first === 0x0d || first === 0x0a) return 'next';   // Enter
+  // q or Q - go back to placeholder
+  if (first === 0x71 || first === 0x51) return 'back';
 
-  // Unknown key - stay on slide
-  return 'replay';
+  // Any other key - go back to placeholder
+  return 'back';
 }
 
 async function main() {
@@ -146,7 +140,7 @@ async function main() {
         const dim = '\x1b[2m';
         const reset = '\x1b[0m';
         const line = '─'.repeat(terminalWidth - 4);
-        const nav = '←/h prev  →/l next  Space/r replay  q quit';
+        const nav = '← prev  → next  q back';
         const counter = `${currentIndex + 1}/${slides.length}`;
         const padding = ' '.repeat(Math.max(0, terminalWidth - 4 - nav.length - counter.length));
 
@@ -172,14 +166,9 @@ async function main() {
           }
           currentIndex = prevIndex >= 0 ? prevIndex : currentIndex;
           stayInPlayback = false;
-        } else if (result === 'quit') {
-          running = false;
+        } else if (result === 'back') {
+          // Go back to placeholder (same slide index)
           stayInPlayback = false;
-          console.clear();
-          stopPresenterServer();
-        } else if (result === 'replay') {
-          // Loop continues, replaying the video
-          stayInPlayback = true;
         }
       }
     }
