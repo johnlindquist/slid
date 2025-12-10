@@ -9,11 +9,11 @@
       "tokens": 764
     },
     "package.json": {
-      "mtime": 1765336832892,
-      "size": 498,
-      "contentHash": "5ad920ce9699f1831ef0831d197e0d7f8e0a6c5a566865ecdb828042e8c89bc9",
+      "mtime": 1765378323289,
+      "size": 1379,
+      "contentHash": "974b6f1967e467a5ae64bd03159e9fe138b7dcb55d96fd519bd13c8578a67bc3",
       "isBinary": false,
-      "tokens": 188
+      "tokens": 475
     },
     "tsconfig.json": {
       "mtime": 1765336791385,
@@ -23,18 +23,18 @@
       "tokens": 192
     },
     "slides/01_intro.md": {
-      "mtime": 1765336919286,
-      "size": 381,
-      "contentHash": "fcdf9f97dfe4ef7db1d0e2deaed3daeb9da1a759a1fc2eeceb7cfcff6077e814",
+      "mtime": 1765347062858,
+      "size": 679,
+      "contentHash": "e6cb5d8453fc3a276d310205b0c45eeeeefb3e090b69645074a7fea2d7fdbe49",
       "isBinary": false,
-      "tokens": 102
+      "tokens": 155
     },
     "slides/02_architecture.md": {
-      "mtime": 1765336919384,
-      "size": 1187,
-      "contentHash": "cd8e4db7311fddc43be4baf09aa4c24fcc4f0ecf759fd0433522951dc2aeae62",
+      "mtime": 1765347062858,
+      "size": 1626,
+      "contentHash": "4c1f4e848ff322a38e3f021ca35ba9c99403cddda3dfde047b60b59bc4f09616",
       "isBinary": false,
-      "tokens": 249
+      "tokens": 342
     },
     "slides/03_features.md": {
       "mtime": 1765336919477,
@@ -51,11 +51,11 @@
       "tokens": 168
     },
     "index.tsx": {
-      "mtime": 1765338896636,
-      "size": 8080,
-      "contentHash": "52cd5ccb132afb07b3fa70473e9106d8e16543667e71cb132bcf15f192cb4af4",
+      "mtime": 1765359902560,
+      "size": 34844,
+      "contentHash": "f1071a5a9da7e118bcdec734c24a7bd0fec5935a1122361cc2bd7695c214f926",
       "isBinary": false,
-      "tokens": 2105
+      "tokens": 8410
     },
     "README.md": {
       "mtime": 1765336791386,
@@ -63,6 +63,195 @@
       "contentHash": "36e7f4f737794e85e893f99655a56b08f985f05d5ad716eab9b847894e080137",
       "isBinary": false,
       "tokens": 69
+    },
+    "slides/99_hidden_test.md": {
+      "mtime": 1765346357303,
+      "size": 180,
+      "contentHash": "05d8e2ad705723d59457b887c0b1d0d9ca185ec1f284062b3aae91a2bfdee07e",
+      "isBinary": false,
+      "tokens": 42
+    },
+    "slides/05_images.md": {
+      "mtime": 1765347252997,
+      "size": 655,
+      "contentHash": "8bb9205f70e9f331b8602e3df581da00fb5fd0af5f49351c10837f4bda8ddbee",
+      "isBinary": false,
+      "tokens": 146
+    },
+    "slides/05_fragments_demo.md": {
+      "mtime": 1765346511068,
+      "size": 614,
+      "contentHash": "822e0c8239fefe4fd55e0f8b280a831a85f18f9c51afc8f852dbb3bb149c5d9c",
+      "isBinary": false,
+      "tokens": 128
+    },
+    "test-live-reload.sh": {
+      "mtime": 1765346411068,
+      "size": 1247,
+      "contentHash": "55d584985885f7eebd34d142570bb6988efb66bf839d84c71e9856496ec2f0fd",
+      "isBinary": false,
+      "tokens": 302
+    },
+    "src/hooks/index.ts": {
+      "mtime": 1765378159662,
+      "size": 174,
+      "contentHash": "479de3d72f6eee9c321a9330df7b98924cb418be4ed29bb676aa6271c7cd8373",
+      "isBinary": false,
+      "tokens": 39
+    },
+    "src/hooks/useSlideWatcher.ts": {
+      "mtime": 1765378136412,
+      "size": 1945,
+      "contentHash": "60a3dc4ad0f2e7ce83326075cdabb1ee39cbfd9fe0de3a00c6cdf63132bd27ed",
+      "isBinary": false,
+      "tokens": 453
+    },
+    "src/hooks/useTerminalSize.ts": {
+      "mtime": 1765378125768,
+      "size": 936,
+      "contentHash": "53e02fcfbbc7f458e1260ff4cb230e07db8e341b60c19a0f45235e53c7606ee6",
+      "isBinary": false,
+      "tokens": 211
+    },
+    "src/hooks/useSlideNavigation.ts": {
+      "mtime": 1765378386455,
+      "size": 3735,
+      "contentHash": "420ab1afc9869769bb8e28cafa0d6b55ae960ea2ba09c3264a7e5f557869625f",
+      "isBinary": false,
+      "tokens": 962
+    },
+    "src/components/EmptyState.tsx": {
+      "mtime": 1765378271036,
+      "size": 529,
+      "contentHash": "2cb239244436bcd7141ce8fc314d85a230a6b19a4981cece0ada647936846c3b",
+      "isBinary": false,
+      "tokens": 136
+    },
+    "src/components/index.ts": {
+      "mtime": 1765378275431,
+      "size": 334,
+      "contentHash": "d668abee32b424fba04278c1956fce113790e689ab64918c4c21e507009d6034",
+      "isBinary": false,
+      "tokens": 74
+    },
+    "src/components/MarkdownSlide.tsx": {
+      "mtime": 1765379480105,
+      "size": 5806,
+      "contentHash": "08409aa9457d51a17054efe62abad2c1a1f0b4ff094ca49dd29cca0583912758",
+      "isBinary": false,
+      "tokens": 1348
+    },
+    "src/components/SlideHeader.tsx": {
+      "mtime": 1765378169760,
+      "size": 1099,
+      "contentHash": "0dea5ad767c73c32fd873081302e64a9c9ea4546269bed9197e12ea3a73651a8",
+      "isBinary": false,
+      "tokens": 279
+    },
+    "src/components/OverviewMode.tsx": {
+      "mtime": 1765378524329,
+      "size": 4151,
+      "contentHash": "46a09cd62f73f3f025eb3d2179d583dec64d7b4e46e57be32e0177fcc95152ed",
+      "isBinary": false,
+      "tokens": 1000
+    },
+    "src/components/ScrollIndicator.tsx": {
+      "mtime": 1765378177667,
+      "size": 900,
+      "contentHash": "9bb79f79692c4c14d58e0225a5030a7386c3453d397a0e1ec70b7a41ef12541e",
+      "isBinary": false,
+      "tokens": 232
+    },
+    "src/components/Footer.tsx": {
+      "mtime": 1765378262708,
+      "size": 790,
+      "contentHash": "5cf9cc5da891da91166c071db4337d41bd055c5dff8a482770b2efabfa4eaa2c",
+      "isBinary": false,
+      "tokens": 202
+    },
+    "src/components/CastSlide.tsx": {
+      "mtime": 1765378218996,
+      "size": 1114,
+      "contentHash": "4b7e042bac72463158a28eaf5319cddcee6b7d4edb049a1f2d727097aa1acd49",
+      "isBinary": false,
+      "tokens": 287
+    },
+    "src/components/App.tsx": {
+      "mtime": 1765378401604,
+      "size": 2879,
+      "contentHash": "8689a675939ca105a75c309d583aad931002fb4fa40f645b5316d7f96d65416d",
+      "isBinary": false,
+      "tokens": 678
+    },
+    "src/utils/presenter.ts": {
+      "mtime": 1765378447380,
+      "size": 2433,
+      "contentHash": "8ce8ac81229a9e16acd01488c9bc602e7f30f626ae92e831e777960a610dad82",
+      "isBinary": false,
+      "tokens": 586
+    },
+    "src/utils/index.ts": {
+      "mtime": 1765378478252,
+      "size": 179,
+      "contentHash": "cc87b588fe6d88dee38906aba1d4c2e383cd69497f0df29d0830146763fab273",
+      "isBinary": false,
+      "tokens": 43
+    },
+    "src/utils/constants.ts": {
+      "mtime": 1765378024457,
+      "size": 343,
+      "contentHash": "a01960e5e94e49404a5f80b1e1a5fd1b84897095620ce62cb832b57c09c8e729",
+      "isBinary": false,
+      "tokens": 92
+    },
+    "src/utils/markdown.ts": {
+      "mtime": 1765378358446,
+      "size": 994,
+      "contentHash": "e78aa8bcdc5c93a101444742bab6b84ffeb062f98abbbf622e6e9a5b162fd0df",
+      "isBinary": false,
+      "tokens": 254
+    },
+    "src/utils/images.ts": {
+      "mtime": 1765378047874,
+      "size": 2758,
+      "contentHash": "f265c2c774a48a9250df7ad7f9a7739ba3cc9a71cff7e9e2c7783d2fa1b508ef",
+      "isBinary": false,
+      "tokens": 651
+    },
+    "src/utils/slides.ts": {
+      "mtime": 1765378370101,
+      "size": 3307,
+      "contentHash": "e5b475c05e41f74817b1aff5012b4a45d192d5015a71e4de43fd32400e0df52e",
+      "isBinary": false,
+      "tokens": 759
+    },
+    "src/types/marked-terminal.d.ts": {
+      "mtime": 1765378347823,
+      "size": 538,
+      "contentHash": "cee97409a56a673b826c6a3cff7ccfec5de1ddbd8f7d58b6656c5dab6ba6990e",
+      "isBinary": false,
+      "tokens": 125
+    },
+    "src/utils/cli.ts": {
+      "mtime": 1765378099522,
+      "size": 2361,
+      "contentHash": "1f4e485302f0908e06c2e02cabbb716e196a6b61aef5ab77cfd645d24c2eee58",
+      "isBinary": false,
+      "tokens": 586
+    },
+    "src/types/index.ts": {
+      "mtime": 1765378018344,
+      "size": 1285,
+      "contentHash": "4ed28fd916adbf41a7a4f011428774830a3c15078307f95341c3111cc28531dc",
+      "isBinary": false,
+      "tokens": 334
+    },
+    "src/index.tsx": {
+      "mtime": 1765378427678,
+      "size": 2454,
+      "contentHash": "226a630a04e179dbba0c04c8a4477c8b7533b25e93a117f00f2df44dc831a1fc",
+      "isBinary": false,
+      "tokens": 597
     }
   }
 }
