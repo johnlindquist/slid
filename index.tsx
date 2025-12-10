@@ -8,6 +8,7 @@ import path from 'node:path';
 import { spawnSync } from 'bun';
 import { marked } from 'marked';
 import TerminalRenderer from 'marked-terminal';
+import { parseArgs } from 'node:util';
 
 // Configure marked for terminal output
 marked.setOptions({
@@ -18,7 +19,8 @@ marked.setOptions({
 });
 
 // --- Configuration ---
-const SLIDES_DIR = './slides';
+const VERSION = '1.0.0';
+const DEFAULT_SLIDES_DIR = './slides';
 
 // --- Types ---
 type Slide =
@@ -29,17 +31,125 @@ type AppAction =
   | { type: 'quit' }
   | { type: 'play'; path: string; slideIndex: number };
 
-// --- Helper: Load Slides ---
-const loadSlides = (): Slide[] => {
-  if (!fs.existsSync(SLIDES_DIR)) {
-    fs.mkdirSync(SLIDES_DIR);
-    fs.writeFileSync(
-      path.join(SLIDES_DIR, '01_intro.md'),
-      '# Welcome\n\nPress Space to scroll, arrows to navigate.'
-    );
+// --- CLI Argument Parsing ---
+interface ParsedArgs {
+  slidesDir: string;
+  startAt: number;
+  showHelp: boolean;
+  showVersion: boolean;
+}
+
+const showHelp = () => {
+  console.log(`
+slides-cli - Terminal-based presentation tool
+
+Usage:
+  bun run index.tsx [options] [slides-directory]
+
+Arguments:
+  slides-directory    Path to slides directory (default: ./slides)
+
+Options:
+  -s, --start-at <n>  Start at slide number (1-indexed, default: 1)
+  -h, --help          Show this help message
+  -v, --version       Show version number
+
+Examples:
+  bun run index.tsx                      # Use ./slides directory
+  bun run index.tsx ./my-talk            # Use custom directory
+  bun run index.tsx --start-at=5         # Start at slide 5
+  bun run index.tsx ./presentations -s 3 # Custom dir, start at slide 3
+`);
+};
+
+const showVersion = () => {
+  console.log(`slides-cli v${VERSION}`);
+};
+
+const parseCliArgs = (): ParsedArgs => {
+  try {
+    const { values, positionals } = parseArgs({
+      args: Bun.argv.slice(2),
+      options: {
+        'start-at': {
+          type: 'string',
+          short: 's',
+        },
+        help: {
+          type: 'boolean',
+          short: 'h',
+        },
+        version: {
+          type: 'boolean',
+          short: 'v',
+        },
+      },
+      allowPositionals: true,
+    });
+
+    // Get slides directory from positional argument or default
+    const slidesDir = positionals[0] || DEFAULT_SLIDES_DIR;
+
+    // Parse start-at value (convert from 1-indexed to 0-indexed)
+    let startAt = 0;
+    if (values['start-at']) {
+      const parsed = parseInt(values['start-at'], 10);
+      if (isNaN(parsed) || parsed < 1) {
+        console.error(`Error: --start-at must be a positive integer (got: ${values['start-at']})`);
+        process.exit(1);
+      }
+      startAt = parsed - 1; // Convert to 0-indexed
+    }
+
+    return {
+      slidesDir,
+      startAt,
+      showHelp: values.help ?? false,
+      showVersion: values.version ?? false,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`Error parsing arguments: ${error.message}`);
+    }
+    console.error('Run with --help for usage information.');
+    process.exit(1);
+  }
+};
+
+// --- Path Validation ---
+const validateSlidesDir = (slidesDir: string): void => {
+  // Resolve to absolute path
+  const resolvedPath = path.resolve(slidesDir);
+
+  if (!fs.existsSync(resolvedPath)) {
+    console.error(`Error: Slides directory not found: ${resolvedPath}`);
+    console.error('');
+    console.error('Please provide a valid path to a directory containing .md or .cast files.');
+    process.exit(1);
   }
 
-  return globSync(`${SLIDES_DIR}/*.{md,cast}`)
+  const stats = fs.statSync(resolvedPath);
+  if (!stats.isDirectory()) {
+    console.error(`Error: Path is not a directory: ${resolvedPath}`);
+    process.exit(1);
+  }
+
+  // Check if directory contains any slides
+  const slides = globSync(`${resolvedPath}/*.{md,cast}`);
+  if (slides.length === 0) {
+    console.error(`Error: No slides found in: ${resolvedPath}`);
+    console.error('');
+    console.error('The directory should contain .md (Markdown) or .cast (Asciinema) files.');
+    console.error('Files are sorted alphabetically, so prefix them with numbers (e.g., 01_intro.md).');
+    process.exit(1);
+  }
+};
+
+// --- Helper: Load Slides ---
+const loadSlides = (slidesDir: string): Slide[] => {
+  const resolvedPath = path.resolve(slidesDir);
+
+  return globSync(`${resolvedPath}/*.{md,cast}`)
     .sort()
     .map((filePath) => {
       const ext = path.extname(filePath);
@@ -223,8 +333,34 @@ const App = ({
 
 // --- Supervisor (The Main Loop) ---
 async function main() {
-  const slides = loadSlides();
-  let currentIndex = 0;
+  // Parse CLI arguments
+  const args = parseCliArgs();
+
+  // Handle --help flag
+  if (args.showHelp) {
+    showHelp();
+    process.exit(0);
+  }
+
+  // Handle --version flag
+  if (args.showVersion) {
+    showVersion();
+    process.exit(0);
+  }
+
+  // Validate slides directory
+  validateSlidesDir(args.slidesDir);
+
+  // Load slides from the specified directory
+  const slides = loadSlides(args.slidesDir);
+
+  // Validate start-at index
+  if (args.startAt >= slides.length) {
+    console.error(`Error: --start-at value ${args.startAt + 1} exceeds total slides (${slides.length})`);
+    process.exit(1);
+  }
+
+  let currentIndex = args.startAt;
   let running = true;
 
   while (running) {
