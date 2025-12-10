@@ -25,6 +25,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "cli-highlight": "^2.1.11",
     "glob": "^13.0.0",
     "gray-matter": "^4.0.3",
     "ink": "^6.5.1",

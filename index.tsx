@@ -7,17 +7,24 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'bun';
 import { marked } from 'marked';
-import TerminalRenderer from 'marked-terminal';
+import { markedTerminal } from 'marked-terminal';
 import { parseArgs } from 'node:util';
 import matter from 'gray-matter';
 
-// Configure marked for terminal output
-marked.setOptions({
-  renderer: new TerminalRenderer({
-    reflowText: true,
-    width: 80,
-  }),
-});
+// Configure marked for terminal output with syntax highlighting
+marked.use(
+  markedTerminal(
+    {
+      reflowText: true,
+      width: 80,
+    },
+    {
+      // cli-highlight options for syntax highlighting
+      // ignoreIllegals: true gracefully handles unknown languages
+      ignoreIllegals: true,
+    }
+  )
+);
 
 // Fragment separator - uses HTML comment syntax that won't render
 const FRAGMENT_SEPARATOR = /<!--\s*fragment\s*-->/gi;
