@@ -125,10 +125,25 @@ async function main() {
       while (stayInPlayback) {
         console.clear();
 
-        // Show controls hint before playback
+        const terminalHeight = process.stdout.rows || 24;
+        const terminalWidth = process.stdout.columns || 80;
         const dim = '\x1b[2m';
         const reset = '\x1b[0m';
-        console.log(`${dim}  Space: pause/resume · .: step frame · Ctrl+C: exit${reset}\n`);
+
+        // Set scroll region to leave bottom 2 lines for footer
+        // ESC[<top>;<bottom>r sets scroll region
+        process.stdout.write(`\x1b[1;${terminalHeight - 2}r`);
+
+        // Move to bottom and draw footer
+        process.stdout.write(`\x1b[${terminalHeight - 1};1H`); // Move to second-to-last line
+        const line = '─'.repeat(terminalWidth);
+        process.stdout.write(`${dim}${line}${reset}`);
+        process.stdout.write(`\x1b[${terminalHeight};1H`); // Move to last line
+        const hint = '  Space: pause/resume · .: step frame · Ctrl+C: exit';
+        process.stdout.write(`${dim}${hint}${reset}`);
+
+        // Move cursor back to top of scroll region
+        process.stdout.write(`\x1b[1;1H`);
 
         try {
           spawnSync(['asciinema', 'play', '-q', '-i', '0.5', '-s', '2', action.path], {
@@ -140,14 +155,17 @@ async function main() {
           console.error("Error playing cast. Is 'asciinema' installed?");
         }
 
+        // Reset scroll region to full screen
+        process.stdout.write(`\x1b[r`);
+        console.clear();
+
         // Show navigation footer
-        const terminalWidth = process.stdout.columns || 80;
-        const line = '─'.repeat(terminalWidth - 4);
+        const navLine = '─'.repeat(terminalWidth - 4);
         const nav = '← prev  → next  q back';
         const counter = `${currentIndex + 1}/${slides.length}`;
         const padding = ' '.repeat(Math.max(0, terminalWidth - 4 - nav.length - counter.length));
 
-        console.log(`\n${dim}  ${line}${reset}`);
+        console.log(`\n${dim}  ${navLine}${reset}`);
         console.log(`${dim}  ${nav}${padding}${counter}  ${reset}`);
 
         // Wait for navigation key using blocking read
