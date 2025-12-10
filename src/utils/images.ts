@@ -46,21 +46,22 @@ export const renderImageToString = async (
 
     const isGif = imagePath.toLowerCase().endsWith('.gif');
 
-    if (isGif) {
-      const buffer = await Bun.file(imagePath).arrayBuffer();
-      const result = await terminalImage.buffer(new Uint8Array(buffer), {
-        width: maxWidth,
-        height: maxHeight,
-        preserveAspectRatio: true,
-      });
-      return result || `[GIF: ${altText}]`;
-    }
-
-    const result = await terminalImage.file(imagePath, {
+    // Disable native protocols (iTerm/Kitty) as they produce single-line
+    // sequences that can break Ink's layout system. Stick to standard ANSI blocks.
+    const options = {
       width: maxWidth,
       height: maxHeight,
       preserveAspectRatio: true,
-    });
+      preferNativeRender: false,
+    };
+
+    if (isGif) {
+      const buffer = await Bun.file(imagePath).arrayBuffer();
+      const result = await terminalImage.buffer(new Uint8Array(buffer), options);
+      return result || `[GIF: ${altText}]`;
+    }
+
+    const result = await terminalImage.file(imagePath, options);
     return result || `[Image: ${altText}]`;
   } catch {
     return `[Image: ${altText}] (failed to render)`;
@@ -72,16 +73,17 @@ export const processMarkdownWithImages = async (
   slideDir: string,
   maxWidth: number,
   maxHeight: number
-): Promise<string> => {
+): Promise<{ content: string; replacements: Record<string, string> }> => {
   const images = parseImageReferences(content);
+  const replacements: Record<string, string> = {};
 
   if (images.length === 0) {
-    return content;
+    return { content, replacements };
   }
 
   let processedContent = content;
 
-  for (const img of images) {
+  for (const [index, img] of images.entries()) {
     const resolvedPath = resolveImagePath(img.imagePath, slideDir);
     const renderedImage = await renderImageToString(
       resolvedPath,
@@ -89,10 +91,25 @@ export const processMarkdownWithImages = async (
       maxWidth,
       maxHeight
     );
-    processedContent = processedContent.replace(img.fullMatch, `\n${renderedImage}\n`);
+
+    // Use a unique placeholder that won't trigger markdown formatting.
+    // We add newlines to ensure it is treated as a distinct block element.
+    const placeholder = `__SLIDE_IMG_${index}_${Date.now()}__`;
+    replacements[placeholder] = renderedImage;
+
+    // Replace the markdown image syntax with the placeholder
+    processedContent = processedContent.replace(img.fullMatch, `\n\n${placeholder}\n\n`);
   }
 
-  return processedContent;
+  return { content: processedContent, replacements };
+};
+
+export const injectImages = (content: string, replacements: Record<string, string>): string => {
+  let result = content;
+  for (const [placeholder, image] of Object.entries(replacements)) {
+    result = result.split(placeholder).join(image);
+  }
+  return result;
 };
 
 export const hasImages = (content: string): boolean => {

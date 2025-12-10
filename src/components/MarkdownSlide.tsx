@@ -3,7 +3,7 @@ import { Box, Text, useInput } from 'ink';
 import type { MarkdownSlide as MarkdownSlideType } from '../types/index.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { createMarkdownRenderer, parseFragments } from '../utils/markdown.js';
-import { processMarkdownWithImages, hasImages } from '../utils/images.js';
+import { processMarkdownWithImages, hasImages, injectImages } from '../utils/images.js';
 import { SlideHeader } from './SlideHeader.js';
 import { ScrollIndicator } from './ScrollIndicator.js';
 import type { AppTheme } from '../utils/themes.js';
@@ -48,7 +48,6 @@ export const MarkdownSlide = memo(function MarkdownSlide({
   // Calculate viewport dimensions
   const headerHeight = 4;
   const viewportHeight = Math.max(5, terminalHeight - headerHeight - 2);
-  const contentWidth = Math.min(terminalWidth - 4, 80);
 
   // Handle scroll input
   useInput((input, key) => {
@@ -84,18 +83,32 @@ export const MarkdownSlide = memo(function MarkdownSlide({
       const render = createMarkdownRenderer(theme);
 
       try {
-        const maxImageWidth = Math.min(contentWidth - 4, 80);
+        // FIX: Calculate exact max width available for images based on layout.
+        // We use 66% of terminal width for the container.
+        const containerWidth = Math.floor(terminalWidth * 0.66);
+        // Subtract 6 for padding to prevent wrapping
+        const availableWidth = Math.max(20, containerWidth - 6);
+        // Cap at 80 to maintain standard text-column feel on large screens
+        const maxImageWidth = Math.min(availableWidth, 80);
+
         const maxImageHeight = Math.floor(viewportHeight * 0.6);
 
         let finalContent: string;
+
         if (hasImages(visibleContent)) {
-          const contentWithImages = await processMarkdownWithImages(
+          // 1. Get content with placeholders (prevents markdown parser from mangling images)
+          const { content: contentWithPlaceholders, replacements } = await processMarkdownWithImages(
             visibleContent,
             slide.slideDir,
             maxImageWidth,
             maxImageHeight
           );
-          finalContent = render(contentWithImages);
+
+          // 2. Render markdown first (placeholders are treated as safe text blocks)
+          const renderedMarkdown = render(contentWithPlaceholders);
+
+          // 3. Swap placeholders with the actual ANSI image strings
+          finalContent = injectImages(renderedMarkdown, replacements);
         } else {
           finalContent = render(visibleContent);
         }
@@ -118,7 +131,7 @@ export const MarkdownSlide = memo(function MarkdownSlide({
     return () => {
       cancelled = true;
     };
-  }, [slide.filename, visibleContent, contentWidth, viewportHeight, slide.slideDir, theme]);
+  }, [slide.filename, visibleContent, terminalWidth, viewportHeight, slide.slideDir, theme]);
 
   const displayContent = isLoading ? processedContent || 'Loading...' : processedContent || '';
   const contentLines = displayContent.split('\n');

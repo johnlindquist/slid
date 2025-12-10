@@ -31,6 +31,7 @@ export const CastSlide = memo(function CastSlide({
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
+      width="100%"
       height="100%"
       borderStyle="double"
       borderColor={theme.colors.ui.border}
@@ -43,6 +44,9 @@ export const CastSlide = memo(function CastSlide({
       </Text>
       <Box marginTop={2} padding={1} borderStyle="single" borderColor={theme.colors.ui.highlight}>
         <Text color={theme.colors.ui.text}>PRESS [SPACE] TO PLAY RECORDING</Text>
+      </Box>
+      <Box marginTop={1}>
+        <Text dimColor>Space: pause/resume · Ctrl+C: exit early</Text>
       </Box>
     </Box>
   );
