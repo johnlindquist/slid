@@ -916,12 +916,13 @@ const App = ({
   }
 
   const { stdout } = useStdout();
+  const terminalWidth = stdout?.columns || 80;
   const terminalHeight = stdout?.rows || 24;
-  // Reserve 3 lines for footer (border + content + border)
+  // Reserve 3 lines for footer (separator + nav + spacing)
   const contentHeight = terminalHeight - 3;
 
   return (
-    <Box flexDirection="column">
+    <Box flexDirection="column" height={terminalHeight}>
       <Box height={contentHeight} alignItems="flex-start" justifyContent="center">
         {currentSlide.type === 'markdown' ? (
           <MarkdownSlide
@@ -936,9 +937,12 @@ const App = ({
         )}
       </Box>
 
-      <Box justifyContent="space-between" paddingX={2}>
-        <Text dimColor>←→ nav  ↑↓ scroll  Tab overview  q quit</Text>
-        <Text dimColor>{reloadCount > 0 ? '● ' : ''}{index + 1}/{slides.length}</Text>
+      <Box flexDirection="column" paddingX={2}>
+        <Text dimColor>{'─'.repeat(terminalWidth - 4)}</Text>
+        <Box justifyContent="space-between">
+          <Text dimColor>←→ nav  ↑↓ scroll  Tab overview  q quit</Text>
+          <Text dimColor>{reloadCount > 0 ? '● ' : ''}{index + 1}/{slides.length}</Text>
+        </Box>
       </Box>
     </Box>
   );
