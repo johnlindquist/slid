@@ -1,0 +1,173 @@
+{
+  "version": 2,
+  "entries": {
+    "08_precommit_hooks.md": {
+      "mtime": 1765445017144,
+      "size": 1235,
+      "contentHash": "20af0d669ef4ead838f7cd4409b921e1ef355b878ed8117b643274ed1c971157",
+      "isBinary": false,
+      "tokens": 313
+    },
+    "01_scripting_copilot.md": {
+      "mtime": 1765450014615,
+      "size": 1362,
+      "contentHash": "04d860e711b86c11f522f4fa552dd9da307fadbd5709fc671f06d0c0bd2f4d42",
+      "isBinary": false,
+      "tokens": 348
+    },
+    "05_continue_a_conversation.md": {
+      "mtime": 1765450041763,
+      "size": 1010,
+      "contentHash": "262880e26adcc49bb2ecb956da3ac60d15e4f0c10ed0663d76f527c7b96cf291",
+      "isBinary": false,
+      "tokens": 230
+    },
+    "10_mdflow_piping.md": {
+      "mtime": 1765448077599,
+      "size": 917,
+      "contentHash": "ba48f61eb4858a02d6aa9c7ee50a2dd7fb6a5703919e9ea29d27378bd7286685",
+      "isBinary": false,
+      "tokens": 238
+    },
+    "04_github_cli_commands.md": {
+      "mtime": 1765450030307,
+      "size": 1013,
+      "contentHash": "5c93a7bc531ef9481583a364cb70c27cad37db66c877f0b9d03b04e4336d9704",
+      "isBinary": false,
+      "tokens": 256
+    },
+    "02_zsh_functions.md": {
+      "mtime": 1765412257317,
+      "size": 1561,
+      "contentHash": "fdd8d946edd9bc5928a0241fc9d4026a0c4665acaddd1b273c8d79a68a4096b9",
+      "isBinary": false,
+      "tokens": 474
+    },
+    "07_agent_alias.md": {
+      "mtime": 1765450050929,
+      "size": 1003,
+      "contentHash": "ea83fa7f5c29cafb1cec3309293c52fc51a3a0ecd73dc1c277a9d4895298886b",
+      "isBinary": false,
+      "tokens": 271
+    },
+    "09_mdflow.md": {
+      "mtime": 1765450056203,
+      "size": 905,
+      "contentHash": "4b57cb49ebfb69b7953795352c9c4ffdfca31a7678b8eb2a0df0db9e8ad22461",
+      "isBinary": false,
+      "tokens": 254
+    },
+    "11_mdflow_commands.md": {
+      "mtime": 1765449970872,
+      "size": 959,
+      "contentHash": "21ac901540b9a5df80837387cace4a1561e82edebd9c2c063d60e96d12fb2b47",
+      "isBinary": false,
+      "tokens": 250
+    },
+    "12_conditional.md": {
+      "mtime": 1765453287439,
+      "size": 948,
+      "contentHash": "dbde44d4ce4118ad650347c98ea3f1c6eb7257d4fe8f240d7d9ac48b0af5e356",
+      "isBinary": false,
+      "tokens": 265
+    },
+    "06_custom_agents.md": {
+      "mtime": 1765442500027,
+      "size": 1070,
+      "contentHash": "34692f85399006773fa97a52a85b5e6cf17c00105136a5310c2b1988902f15b7",
+      "isBinary": false,
+      "tokens": 232
+    },
+    "03_interactive_mode.md": {
+      "mtime": 1765450019708,
+      "size": 821,
+      "contentHash": "9250fbcd1b76759310266f0a25db71b914a78b3dc7a5c0580b3c6b5c22e1a968",
+      "isBinary": false,
+      "tokens": 176
+    },
+    "10_mdflow_plan_demo.cast": {
+      "mtime": 1765448026104,
+      "size": 99207,
+      "contentHash": "66a7dbb3026bc7c14e87d8ec1f4688e49f97c324f5ea1b3a670e80b638451e58",
+      "isBinary": false,
+      "tokens": 50812
+    },
+    "01_scripting_copilot_demo.cast": {
+      "mtime": 1765433563393,
+      "size": 4541,
+      "contentHash": "978473721c10ba5daa06e0e52e38aeff4f85715137c380cfe2ea31e6eaf59a65",
+      "isBinary": false,
+      "tokens": 2174
+    },
+    "07_agent_alias_demo.cast": {
+      "mtime": 1765443344331,
+      "size": 6492,
+      "contentHash": "f767e293476a4592cc3ba672adfeffcb4f6e1f09f10f4ab1aad3f0329cc18acb",
+      "isBinary": false,
+      "tokens": 3214
+    },
+    "06_custom_agents_demo.cast": {
+      "mtime": 1765442341519,
+      "size": 14659,
+      "contentHash": "3630f883eca46d3f05d8fe9199dafd3bc65d350603bf827e96a47bbc093944d1",
+      "isBinary": false,
+      "tokens": 7063
+    },
+    "12_conditional_demo.cast": {
+      "mtime": 1765453245016,
+      "size": 25144,
+      "contentHash": "1e0d9166e648c00571c18e76a50bd85659ec1c949f4c6c77375c1cca28cad40c",
+      "isBinary": false,
+      "tokens": 12910
+    },
+    "08_precommit_hooks_demo.cast": {
+      "mtime": 1765444985169,
+      "size": 423260,
+      "contentHash": "ea3d14cb2ad461925538f663e9a7a8ab643d3b0574ccd0290507b6802d1da59a",
+      "isBinary": false,
+      "tokens": 164158
+    },
+    "09_mdflow_demo.cast": {
+      "mtime": 1765446570402,
+      "size": 20753,
+      "contentHash": "04b1e4e4a6fdbfab1b9c5e2f89e50261e09721e5a5b6c306f4c31ac00859b6f0",
+      "isBinary": false,
+      "tokens": 10064
+    },
+    "03_interactive_mode_demo.cast": {
+      "mtime": 1765431510846,
+      "size": 223411,
+      "contentHash": "96f3b2a7a5778b7b32bce0e4f2322fa380cdda0c73f4a821e40434703609c5fb",
+      "isBinary": false,
+      "tokens": 80772
+    },
+    "02_zsh_functions_demo.cast": {
+      "mtime": 1765434581513,
+      "size": 24243,
+      "contentHash": "3310189ac5f392b638ec4ac0b93aa9b6779686277a7013c49f7088c0b296f78a",
+      "isBinary": false,
+      "tokens": 13566
+    },
+    "11_mdflow_commands_demo.cast": {
+      "mtime": 1765449276021,
+      "size": 196668,
+      "contentHash": "760a7cd3e057b05aaf3af457e0c769a5d1488714c87e29097e02e0122fd0b062",
+      "isBinary": false,
+      "tokens": 78520
+    },
+    "04_grab_github_data_demo.cast": {
+      "mtime": 1765436519822,
+      "size": 558692,
+      "contentHash": "80c68dd648911bf19ab8e7c310ab854eb3faff3c37a52f83501f747c368051d1",
+      "isBinary": false,
+      "tokens": 255553
+    },
+    "05_continue_a_conversation_demo.cast": {
+      "mtime": 1765439612274,
+      "size": 1247958,
+      "contentHash": "c80db0465daddac69b0f34247625d5407a018240f14982ca6cbd8d5a4e631505",
+      "isBinary": false,
+      "tokens": 501666
+    }
+  }
+}

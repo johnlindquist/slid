@@ -2,11 +2,11 @@
   "version": 2,
   "entries": {
     "CLAUDE.md": {
-      "mtime": 1765336791385,
-      "size": 2606,
-      "contentHash": "d2a17c0be7103e630bc8955d900380397935043b17a9a4d734989871431a6e5a",
+      "mtime": 1765388072388,
+      "size": 4307,
+      "contentHash": "05e0194257a8de3fb68801cdf5439a410207fa493d76891a33fb9f1be21790c2",
       "isBinary": false,
-      "tokens": 764
+      "tokens": 1382
     },
     "package.json": {
       "mtime": 1765382199665,
@@ -58,11 +58,11 @@
       "tokens": 8410
     },
     "README.md": {
-      "mtime": 1765336791386,
-      "size": 225,
-      "contentHash": "36e7f4f737794e85e893f99655a56b08f985f05d5ad716eab9b847894e080137",
+      "mtime": 1765417979405,
+      "size": 219,
+      "contentHash": "0216504f7f9d82637987f3ea572922402055db096b05363bee95efe66490bbe2",
       "isBinary": false,
-      "tokens": 69
+      "tokens": 68
     },
     "slides/99_hidden_test.md": {
       "mtime": 1765346357303,
@@ -315,6 +315,111 @@
       "contentHash": "9f9874819b3acd7406447c3efc2ea6c625ef29e40fd52982de542e7a2fe89e5f",
       "isBinary": false,
       "tokens": 1154
+    },
+    "copilot-session-b214cad5-7f12-4a86-a7db-7c793defcee8.md": {
+      "mtime": 1765444661138,
+      "size": 8637,
+      "contentHash": "75a864b40e80b7bdd133290c1cc02f49d818eb39fca53ba5518062d3367f032e",
+      "isBinary": false,
+      "tokens": 2463
+    },
+    "arch.plan.md": {
+      "mtime": 1765447085385,
+      "size": 2164,
+      "contentHash": "ff7dd11167eaa41650fc552e3fb83e3e3cfb26caf5b7305b6753d97de20f7973",
+      "isBinary": false,
+      "tokens": 450
+    },
+    "PACKAGES.md": {
+      "mtime": 1765433728672,
+      "size": 1168,
+      "contentHash": "dfaa56908485a7d3446967525cba110198c4b86485d9d891f91bcf27b7a55a14",
+      "isBinary": false,
+      "tokens": 322
+    },
+    "slides/08_precommit_hooks.md": {
+      "mtime": 1765445017144,
+      "size": 1235,
+      "contentHash": "20af0d669ef4ead838f7cd4409b921e1ef355b878ed8117b643274ed1c971157",
+      "isBinary": false,
+      "tokens": 313
+    },
+    "slides/01_scripting_copilot.md": {
+      "mtime": 1765450014615,
+      "size": 1362,
+      "contentHash": "04d860e711b86c11f522f4fa552dd9da307fadbd5709fc671f06d0c0bd2f4d42",
+      "isBinary": false,
+      "tokens": 348
+    },
+    "slides/10_mdflow_piping.md": {
+      "mtime": 1765448077599,
+      "size": 917,
+      "contentHash": "ba48f61eb4858a02d6aa9c7ee50a2dd7fb6a5703919e9ea29d27378bd7286685",
+      "isBinary": false,
+      "tokens": 238
+    },
+    "slides/05_continue_a_conversation.md": {
+      "mtime": 1765450041763,
+      "size": 1010,
+      "contentHash": "262880e26adcc49bb2ecb956da3ac60d15e4f0c10ed0663d76f527c7b96cf291",
+      "isBinary": false,
+      "tokens": 230
+    },
+    "slides/04_github_cli_commands.md": {
+      "mtime": 1765450030307,
+      "size": 1013,
+      "contentHash": "5c93a7bc531ef9481583a364cb70c27cad37db66c877f0b9d03b04e4336d9704",
+      "isBinary": false,
+      "tokens": 256
+    },
+    "slides/07_agent_alias.md": {
+      "mtime": 1765450050929,
+      "size": 1003,
+      "contentHash": "ea83fa7f5c29cafb1cec3309293c52fc51a3a0ecd73dc1c277a9d4895298886b",
+      "isBinary": false,
+      "tokens": 271
+    },
+    "slides/02_zsh_functions.md": {
+      "mtime": 1765412257317,
+      "size": 1561,
+      "contentHash": "fdd8d946edd9bc5928a0241fc9d4026a0c4665acaddd1b273c8d79a68a4096b9",
+      "isBinary": false,
+      "tokens": 474
+    },
+    "slides/09_mdflow.md": {
+      "mtime": 1765450056203,
+      "size": 905,
+      "contentHash": "4b57cb49ebfb69b7953795352c9c4ffdfca31a7678b8eb2a0df0db9e8ad22461",
+      "isBinary": false,
+      "tokens": 254
+    },
+    "slides/11_mdflow_commands.md": {
+      "mtime": 1765449970872,
+      "size": 959,
+      "contentHash": "21ac901540b9a5df80837387cace4a1561e82edebd9c2c063d60e96d12fb2b47",
+      "isBinary": false,
+      "tokens": 250
+    },
+    "slides/12_conditional.md": {
+      "mtime": 1765453287439,
+      "size": 948,
+      "contentHash": "dbde44d4ce4118ad650347c98ea3f1c6eb7257d4fe8f240d7d9ac48b0af5e356",
+      "isBinary": false,
+      "tokens": 265
+    },
+    "slides/06_custom_agents.md": {
+      "mtime": 1765442500027,
+      "size": 1070,
+      "contentHash": "34692f85399006773fa97a52a85b5e6cf17c00105136a5310c2b1988902f15b7",
+      "isBinary": false,
+      "tokens": 232
+    },
+    "slides/03_interactive_mode.md": {
+      "mtime": 1765450019708,
+      "size": 821,
+      "contentHash": "9250fbcd1b76759310266f0a25db71b914a78b3dc7a5c0580b3c6b5c22e1a968",
+      "isBinary": false,
+      "tokens": 176
     }
   }
 }
