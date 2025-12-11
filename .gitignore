@@ -34,8 +34,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .DS_Store
 
 # Built binaries
-slides-cli
-slides-cli-darwin-arm64
-slides-cli-darwin-x64
-slides-cli-linux-x64
-slides-cli.exe
+slid
+slid-darwin-arm64
+slid-darwin-x64
+slid-linux-x64
+slid.exe

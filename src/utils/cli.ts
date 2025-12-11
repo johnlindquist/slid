@@ -4,7 +4,7 @@ import { VERSION, DEFAULT_SLIDES_DIR } from './constants.js';
 
 export const showHelp = (): void => {
   console.log(`
-slides-cli - Terminal-based presentation tool
+slid - Terminal-based presentation tool
 
 Usage:
   bun run index.tsx [options] [slides-directory]
@@ -28,7 +28,7 @@ Examples:
 };
 
 export const showVersion = (): void => {
-  console.log(`slides-cli v${VERSION}`);
+  console.log(`slid v${VERSION}`);
 };
 
 export const parseCliArgs = (): ParsedArgs => {

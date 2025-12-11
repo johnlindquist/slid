@@ -161,8 +161,11 @@ export const MarkdownSlide = memo(function MarkdownSlide({
   const leftPadding = Math.floor((terminalWidth - dynamicWidth) / 2);
 
   return (
-    <Box flexDirection="column" width={terminalWidth} paddingLeft={leftPadding}>
-      <Box flexDirection="column" width={dynamicWidth}>
+    <Box flexDirection="column" width={terminalWidth}>
+      <Box paddingLeft={1}>
+        <Text dimColor>{slide.filename}</Text>
+      </Box>
+      <Box flexDirection="column" width={dynamicWidth} marginLeft={leftPadding}>
         <SlideHeader
           text={headerText}
           terminalWidth={terminalWidth}
@@ -171,7 +174,7 @@ export const MarkdownSlide = memo(function MarkdownSlide({
           font={headerFont}
         />
 
-        <Box height={viewportHeight} flexDirection="column" alignItems="center" overflow="hidden">
+        <Box height={viewportHeight} flexDirection="column" overflow="hidden">
           <Box paddingX={2}>
             <Text>{visibleLines.join('\n')}</Text>
           </Box>

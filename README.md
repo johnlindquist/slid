@@ -1,4 +1,4 @@
-# slides-cli
+# slid
 
 To install dependencies:
 

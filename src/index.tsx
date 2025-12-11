@@ -125,11 +125,6 @@ async function main() {
       while (stayInPlayback) {
         console.clear();
 
-        // Show controls hint before playback
-        const dim = '\x1b[2m';
-        const reset = '\x1b[0m';
-        console.log(`${dim}  Space: pause/resume · .: step frame · Ctrl+C: exit${reset}\n`);
-
         try {
           spawnSync(['asciinema', 'play', '-q', '-i', '0.5', '-s', '2', action.path], {
             stdin: 'inherit',
@@ -142,6 +137,8 @@ async function main() {
 
         // Show navigation footer
         const terminalWidth = process.stdout.columns || 80;
+        const dim = '\x1b[2m';
+        const reset = '\x1b[0m';
         const line = '─'.repeat(terminalWidth - 4);
         const nav = '← prev  → next  q back';
         const counter = `${currentIndex + 1}/${slides.length}`;

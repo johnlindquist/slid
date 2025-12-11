@@ -26,35 +26,43 @@ export type AppTheme = {
     link: ChalkInstance;
     listitem: ChalkInstance;
     text: ChalkInstance;
+    codespan: ChalkInstance;
+    hr: ChalkInstance;
+    del: ChalkInstance;
+    table: ChalkInstance;
   };
 };
 
 export const THEMES: Record<string, AppTheme> = {
   default: {
     id: 'default',
-    name: 'Default (Cyber)',
+    name: 'Default',
     colors: {
-      ui: { border: 'cyan', highlight: 'green', text: 'white', dim: 'gray' },
-      header: { gradient: 'cristal', fallback: 'cyan' },
+      ui: { border: 'whiteBright', highlight: 'cyanBright', text: 'whiteBright', dim: 'gray' },
+      header: { gradient: 'cristal', fallback: 'cyanBright' },
     },
     markdown: {
-      code: chalk.yellow,
+      code: chalk.bgGray.whiteBright,
       blockquote: chalk.gray.italic,
-      heading: chalk.green.bold,
-      firstHeading: chalk.magenta.underline.bold,
-      strong: chalk.bold.cyan,
-      em: chalk.italic,
-      link: chalk.blue,
-      listitem: chalk.white,
-      text: chalk.white,
+      heading: chalk.cyanBright.bold,
+      firstHeading: chalk.whiteBright.underline.bold,
+      strong: chalk.bold.whiteBright,
+      em: chalk.italic.white,
+      link: chalk.cyanBright.underline,
+      listitem: chalk.whiteBright,
+      text: chalk.whiteBright,
+      codespan: chalk.yellowBright,
+      hr: chalk.gray,
+      del: chalk.gray.strikethrough,
+      table: chalk.whiteBright,
     },
   },
   light: {
     id: 'light',
     name: 'High Contrast',
     colors: {
-      ui: { border: 'blue', highlight: 'magenta', text: 'whiteBright', dim: 'blueBright' },
-      header: { gradient: 'morning', fallback: 'blue' },
+      ui: { border: 'blueBright', highlight: 'magentaBright', text: 'whiteBright', dim: 'blueBright' },
+      header: { gradient: 'morning', fallback: 'blueBright' },
     },
     markdown: {
       code: chalk.bgGray.whiteBright,
@@ -66,25 +74,33 @@ export const THEMES: Record<string, AppTheme> = {
       link: chalk.magentaBright.underline,
       listitem: chalk.whiteBright,
       text: chalk.whiteBright,
+      codespan: chalk.yellowBright,
+      hr: chalk.blueBright,
+      del: chalk.gray.strikethrough,
+      table: chalk.whiteBright,
     },
   },
   amber: {
     id: 'amber',
     name: 'Retro Amber',
     colors: {
-      ui: { border: 'yellow', highlight: 'yellow', text: '#ffcc00', dim: '#664400' },
-      header: { gradient: 'summer', fallback: 'yellow' },
+      ui: { border: 'yellowBright', highlight: 'yellowBright', text: 'yellowBright', dim: '#664400' },
+      header: { gradient: 'summer', fallback: 'yellowBright' },
     },
     markdown: {
-      code: chalk.yellow,
-      blockquote: chalk.yellow.dim,
-      heading: chalk.yellow.bold,
-      firstHeading: chalk.yellow.underline.bold,
+      code: chalk.bgHex('#332200').yellowBright,
+      blockquote: chalk.yellow.italic,
+      heading: chalk.yellowBright.bold,
+      firstHeading: chalk.yellowBright.underline.bold,
       strong: chalk.bold.yellowBright,
-      em: chalk.italic,
-      link: chalk.yellow.underline,
-      listitem: chalk.yellow,
-      text: chalk.hex('#ffcc00'),
+      em: chalk.italic.yellow,
+      link: chalk.yellowBright.underline,
+      listitem: chalk.yellowBright,
+      text: chalk.yellowBright,
+      codespan: chalk.yellowBright.bold,
+      hr: chalk.yellow,
+      del: chalk.hex('#664400').strikethrough,
+      table: chalk.yellowBright,
     },
   },
 };

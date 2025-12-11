@@ -20,6 +20,10 @@ export const createMarkdownRenderer = (theme: AppTheme) => {
         link: theme.markdown.link,
         listitem: theme.markdown.listitem,
         paragraph: theme.markdown.text,
+        codespan: theme.markdown.codespan,
+        hr: theme.markdown.hr,
+        del: theme.markdown.del,
+        table: theme.markdown.table,
       },
       {
         // cli-highlight options for syntax highlighting
