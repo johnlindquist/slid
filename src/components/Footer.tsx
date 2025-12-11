@@ -23,16 +23,13 @@ export const Footer = memo(function Footer({
   currentFont,
 }: FooterProps) {
   return (
-    <Box flexDirection="column" paddingX={2}>
-      <Text color={theme.colors.ui.dim}>{'─'.repeat(terminalWidth - 4)}</Text>
-      <Box justifyContent="space-between">
-        <Text color={theme.colors.ui.dim}>←→ nav  ↑↓ scroll  f font  t theme  Tab overview  q quit</Text>
-        <Text color={theme.colors.ui.dim}>
-          {currentFont ? `[${currentFont}] ` : ''}
-          {hasReloaded ? '● ' : ''}
-          {slideIndex + 1}/{totalSlides}
-        </Text>
-      </Box>
+    <Box justifyContent="space-between">
+      <Text color={theme.colors.ui.dim}> ←→ nav  ↑↓ scroll  f font  t theme  Tab overview  q quit</Text>
+      <Text color={theme.colors.ui.dim}>
+        {currentFont ? `[${currentFont}] ` : ''}
+        {hasReloaded ? '● ' : ''}
+        {slideIndex + 1}/{totalSlides}
+      </Text>
     </Box>
   );
 });

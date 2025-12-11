@@ -27,7 +27,7 @@ export const ScrollIndicator = memo(function ScrollIndicator({
   const showSteps = totalSteps !== undefined && totalSteps > 1;
 
   return (
-    <Box justifyContent="space-between" paddingX={2}>
+    <Box justifyContent="space-between">
       <Text color={theme.colors.ui.dim}>
         {scrollY > 0 ? '↑' : ' '}
         {scrollY + viewportHeight < totalLines ? '↓' : ' '}

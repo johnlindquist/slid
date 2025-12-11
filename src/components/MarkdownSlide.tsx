@@ -47,9 +47,9 @@ export const MarkdownSlide = memo(function MarkdownSlide({
   const contentLinesRef = useRef<number>(0);
   const { width: terminalWidth, height: terminalHeight } = useTerminalSize();
 
-  // Calculate viewport dimensions
-  const headerHeight = 4;
-  const viewportHeight = Math.max(5, terminalHeight - headerHeight - 2);
+  // Calculate viewport dimensions - no reserved space, use flexGrow
+  const headerHeight = 0;
+  const viewportHeight = Math.max(5, terminalHeight - headerHeight);
 
   // Handle scroll input
   useInput((input, key) => {
@@ -161,23 +161,23 @@ export const MarkdownSlide = memo(function MarkdownSlide({
   const leftPadding = Math.floor((terminalWidth - dynamicWidth) / 2);
 
   return (
-    <Box flexDirection="column" width={terminalWidth}>
-      <Box paddingLeft={1}>
-        <Text dimColor>{slide.filename}</Text>
-      </Box>
-      <Box flexDirection="column" width={dynamicWidth} marginLeft={leftPadding}>
+    <Box flexDirection="column" width={terminalWidth} height="100%" overflow="hidden">
+      {/* One line of padding above header */}
+      <Text> </Text>
+      {/* Header rendered at full terminal width, centered */}
+      <Box justifyContent="center" width={terminalWidth}>
         <SlideHeader
           text={headerText}
           terminalWidth={terminalWidth}
-          contentWidth={dynamicWidth}
+          contentWidth={terminalWidth}
           theme={theme}
           font={headerFont}
         />
-
-        <Box height={viewportHeight} flexDirection="column" overflow="hidden">
-          <Box paddingX={2}>
-            <Text>{visibleLines.join('\n')}</Text>
-          </Box>
+      </Box>
+      {/* Content constrained to dynamicWidth for readability */}
+      <Box flexDirection="column" width={dynamicWidth} marginLeft={leftPadding} flexGrow={1} overflow="hidden">
+        <Box flexGrow={1} flexDirection="column" overflow="hidden">
+          <Text>{visibleLines.join('\n')}</Text>
         </Box>
 
         <ScrollIndicator

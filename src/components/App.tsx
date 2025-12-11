@@ -116,12 +116,12 @@ export function App({
     );
   }
 
-  // Presentation mode
-  const contentHeight = terminalHeight - 3;
+  // Presentation mode - reserve 1 line for footer
+  const contentHeight = terminalHeight - 1;
 
   return (
-    <Box flexDirection="column" width={terminalWidth}>
-      <Box height={contentHeight} width={terminalWidth}>
+    <Box flexDirection="column" width={terminalWidth} height={terminalHeight}>
+      <Box height={contentHeight} width={terminalWidth} overflow="hidden">
         {currentSlide.type === 'markdown' ? (
           <MarkdownSlide
             slide={currentSlide}

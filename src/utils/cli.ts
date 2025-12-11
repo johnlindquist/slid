@@ -17,6 +17,7 @@ Options:
   -p, --presenter     Enable presenter mode with speaker notes
   -h, --help          Show this help message
   -v, --version       Show version number
+  --wezterm-config    Show WezTerm config snippet for presentation mode
 
 Examples:
   bun run index.tsx                      # Use ./slides directory
@@ -24,6 +25,27 @@ Examples:
   bun run index.tsx --start-at=5         # Start at slide 5
   bun run index.tsx --presenter          # Enable presenter mode
   bun run index.tsx ./presentations -s 3 # Custom dir, start at slide 3
+`);
+};
+
+export const showWeztermConfig = (): void => {
+  console.log(`
+Add this to your ~/.wezterm.lua to enable presentation mode (hide tab bar):
+
+-- Slid presentation mode: hide tab bar when slid_presentation user var is set
+wezterm.on('user-var-changed', function(window, pane, name, value)
+  if name == 'slid_presentation' then
+    local overrides = window:get_config_overrides() or {}
+    if value == '1' then
+      overrides.enable_tab_bar = false
+      overrides.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
+    else
+      overrides.enable_tab_bar = nil
+      overrides.window_padding = nil
+    end
+    window:set_config_overrides(overrides)
+  end
+end)
 `);
 };
 

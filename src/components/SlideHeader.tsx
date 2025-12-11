@@ -44,7 +44,7 @@ export const SlideHeader = memo(function SlideHeader({
   const useBigText = true;
 
   return (
-    <Box flexDirection="column" alignItems="center">
+    <Box alignItems="center">
       {useBigText ? (
         <Gradient name={theme.colors.header.gradient}>
           <BigText text={text} font={font} />
