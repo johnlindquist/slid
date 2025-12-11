@@ -35,7 +35,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Built binaries
 slid
-slid-darwin-arm64
-slid-darwin-x64
-slid-linux-x64
-slid.exe
+slid-*
+slides-cli
+slides-cli-*
+*.exe
