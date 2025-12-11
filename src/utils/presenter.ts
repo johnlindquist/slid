@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { ServerWebSocket } from 'bun';
-import type { Slide, PresenterMessage } from '../types/index.js';
-import { PRESENTER_PORT } from './constants.js';
+import type { Slide, PresenterMessage } from '../types';
+import { PRESENTER_PORT } from './constants';
 
 // Encapsulated presenter state
 let presenterServer: ReturnType<typeof Bun.serve> | null = null;

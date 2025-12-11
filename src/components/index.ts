@@ -1,7 +1,7 @@
-export { SlideHeader } from './SlideHeader.js';
-export { ScrollIndicator } from './ScrollIndicator.js';
-export { MarkdownSlide } from './MarkdownSlide.js';
-export { CastSlide } from './CastSlide.js';
-export { OverviewMode } from './OverviewMode.js';
-export { Footer } from './Footer.js';
-export { EmptyState } from './EmptyState.js';
+export { SlideHeader } from './SlideHeader';
+export { ScrollIndicator } from './ScrollIndicator';
+export { MarkdownSlide } from './MarkdownSlide';
+export { CastSlide } from './CastSlide';
+export { OverviewMode } from './OverviewMode';
+export { Footer } from './Footer';
+export { EmptyState } from './EmptyState';

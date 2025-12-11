@@ -2,8 +2,8 @@ import React, { memo } from 'react';
 import { Box, Text, useInput } from 'ink';
 import BigText from 'ink-big-text';
 import Gradient from 'ink-gradient';
-import type { CastSlide as CastSlideType } from '../types/index.js';
-import type { AppTheme } from '../utils/themes.js';
+import type { CastSlide as CastSlideType } from '../types';
+import type { AppTheme } from '../utils/themes';
 
 type CastSlideProps = {
   slide: CastSlideType;

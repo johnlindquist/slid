@@ -1,3 +1,3 @@
-export { useTerminalSize } from './useTerminalSize.js';
-export { useSlideWatcher } from './useSlideWatcher.js';
-export { useSlideNavigation } from './useSlideNavigation.js';
+export { useTerminalSize } from './useTerminalSize';
+export { useSlideWatcher } from './useSlideWatcher';
+export { useSlideNavigation } from './useSlideNavigation';

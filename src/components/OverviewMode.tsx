@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
 import { Box, Text, useInput } from 'ink';
 import Gradient from 'ink-gradient';
-import type { Slide } from '../types/index.js';
-import { useTerminalSize } from '../hooks/useTerminalSize.js';
-import type { AppTheme } from '../utils/themes.js';
+import type { Slide } from '../types';
+import { useTerminalSize } from '../hooks/useTerminalSize';
+import type { AppTheme } from '../utils/themes';
 
 type OverviewModeProps = {
   slides: Slide[];

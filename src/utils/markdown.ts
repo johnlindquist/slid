@@ -1,7 +1,7 @@
 import { Marked } from 'marked';
 import { markedTerminal } from 'marked-terminal';
-import { FRAGMENT_SEPARATOR } from './constants.js';
-import type { AppTheme } from './themes.js';
+import { FRAGMENT_SEPARATOR } from './constants';
+import type { AppTheme } from './themes';
 
 // Factory: Creates a renderer configured for the specific theme
 export const createMarkdownRenderer = (theme: AppTheme) => {

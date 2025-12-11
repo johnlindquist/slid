@@ -4,27 +4,32 @@ Use command substitution `$()` to embed `gh` CLI output in prompts.
 
 ## Validate an Issue
 
+First, view the issue
 ```bash
-# First, view the issue
 gh issue view 1
+```
 
-# Then use !! to reference the previous command
+Then use `!!` to reference the previous command
+```bash
 ico "Is this issue valid? $(!!)"
-#                          ^^ expands to: gh issue view 1
 ```
 
 ZSH trick: `!!` expands to your last command, so you can run `gh` first, then embed it!
 
 ## More Examples
 
+Summarize a PR
 ```bash
-# Summarize a PR
 co "Summarize this PR: $(gh pr view 123)"
+```
 
-# Review changes
+Review changes
+```bash
 co "Review these changes: $(gh pr diff 42)"
+```
 
-# Prioritize work
+Prioritize work
+```bash
 co "Which issue should I tackle? $(gh issue list --limit 5)"
 ```
 

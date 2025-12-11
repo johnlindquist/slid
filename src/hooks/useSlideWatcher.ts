@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import fs from 'node:fs';
 import path from 'node:path';
-import type { Slide } from '../types/index.js';
-import { loadSlides } from '../utils/slides.js';
+import type { Slide } from '../types';
+import { loadSlides } from '../utils/slides';
 
 type SlideWatcherResult = {
   slides: Slide[];

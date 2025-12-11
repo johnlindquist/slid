@@ -2,15 +2,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { render } from 'ink';
 import { spawnSync } from 'bun';
-import { App } from './components/App.js';
-import type { AppAction } from './types/index.js';
-import { parseCliArgs, showHelp, showVersion } from './utils/cli.js';
-import { validateSlidesDir, loadSlides } from './utils/slides.js';
+import { App } from './components/App';
+import type { AppAction } from './types';
+import { parseCliArgs, showHelp, showVersion } from './utils/cli';
+import { validateSlidesDir, loadSlides } from './utils/slides';
 import {
   startPresenterServer,
   broadcastSlideChange,
   stopPresenterServer,
-} from './utils/presenter.js';
+} from './utils/presenter';
 
 /**
  * Enter presentation mode: hide WezTerm tab bar and maximize window.
@@ -206,3 +206,5 @@ async function main() {
 }
 
 main();
+
+// nice!

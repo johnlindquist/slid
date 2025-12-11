@@ -4,11 +4,13 @@ Resume previous sessions with `--continue` or `--resume`.
 
 ## Chain Prompts Together
 
+First, get suggestions
 ```bash
-# First, get suggestions
 co "Suggest the next 3 tasks"
+```
 
-# Then continue the conversation to dig deeper
+Then continue the conversation to dig deeper
+```bash
 cocon "Argue for the task we should do next"
 ```
 
@@ -16,14 +18,18 @@ The `cocon` alias uses `--continue` to resume your most recent session.
 
 ## Session Management
 
+Continue most recent session
 ```bash
-# Continue most recent session
 copilot --continue
+```
 
-# Pick from recent sessions
+Pick from recent sessions
+```bash
 copilot --resume
+```
 
-# Resume a specific session ID
+Resume a specific session ID
+```bash
 copilot --resume abc123
 ```
 

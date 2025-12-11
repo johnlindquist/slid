@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import terminalImage from 'terminal-image';
-import type { ImageRef } from '../types/index.js';
-import { IMAGE_REGEX } from './constants.js';
+import type { ImageRef } from '../types';
+import { IMAGE_REGEX } from './constants';
 
 export const parseImageReferences = (content: string): ImageRef[] => {
   const images: ImageRef[] = [];

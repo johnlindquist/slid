@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Box, Text } from 'ink';
 import BigText from 'ink-big-text';
 import Gradient from 'ink-gradient';
-import type { AppTheme } from '../utils/themes.js';
+import type { AppTheme } from '../utils/themes';
 
 export const BIGTEXT_FONTS = [
   'block',

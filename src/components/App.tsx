@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
-import type { Slide, AppAction } from '../types/index.js';
-import { useTerminalSize } from '../hooks/useTerminalSize.js';
-import { useSlideWatcher } from '../hooks/useSlideWatcher.js';
-import { useSlideNavigation } from '../hooks/useSlideNavigation.js';
-import { MarkdownSlide } from './MarkdownSlide.js';
-import { CastSlide } from './CastSlide.js';
-import { OverviewMode } from './OverviewMode.js';
-import { Footer } from './Footer.js';
-import { EmptyState } from './EmptyState.js';
-import { ThemeSelector } from './ThemeSelector.js';
-import { THEMES, type AppTheme } from '../utils/themes.js';
-import { BIGTEXT_FONTS, type BigTextFont } from './SlideHeader.js';
+import type { Slide, AppAction } from '../types';
+import { useTerminalSize } from '../hooks/useTerminalSize';
+import { useSlideWatcher } from '../hooks/useSlideWatcher';
+import { useSlideNavigation } from '../hooks/useSlideNavigation';
+import { MarkdownSlide } from './MarkdownSlide';
+import { CastSlide } from './CastSlide';
+import { OverviewMode } from './OverviewMode';
+import { Footer } from './Footer';
+import { EmptyState } from './EmptyState';
+import { ThemeSelector } from './ThemeSelector';
+import { THEMES, type AppTheme } from '../utils/themes';
+import { BIGTEXT_FONTS, type BigTextFont } from './SlideHeader';
 
 type AppProps = {
   slides: Slide[];

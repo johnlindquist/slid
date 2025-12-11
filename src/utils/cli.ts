@@ -1,6 +1,6 @@
 import { parseArgs } from 'node:util';
-import type { ParsedArgs } from '../types/index.js';
-import { VERSION, DEFAULT_SLIDES_DIR } from './constants.js';
+import type { ParsedArgs } from '../types';
+import { VERSION, DEFAULT_SLIDES_DIR } from './constants';
 
 export const showHelp = (): void => {
   console.log(`

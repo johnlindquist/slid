@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Box, Text } from 'ink';
-import type { AppTheme } from '../utils/themes.js';
+import type { AppTheme } from '../utils/themes';
 
 type FooterProps = {
   terminalWidth: number;

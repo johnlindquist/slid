@@ -2,8 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { globSync } from 'glob';
 import matter from 'gray-matter';
-import type { Slide, SlideMetadata } from '../types/index.js';
-import { parseNotes, stripNotes, parseFragments } from './markdown.js';
+import type { Slide, SlideMetadata } from '../types';
+import { parseNotes, stripNotes, parseFragments } from './markdown';
 
 export const validateSlidesDir = (slidesDir: string): void => {
   const resolvedPath = path.resolve(slidesDir);
@@ -94,3 +94,5 @@ export const getSlideSteps = (slide: Slide): number => {
   const fragments = parseFragments(contentWithoutHeader);
   return Math.max(1, fragments.length);
 };
+
+export const thisNeedsToBeTested = (slide: Slide): void => { }

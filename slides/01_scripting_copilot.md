@@ -4,38 +4,42 @@ Use `copilot -p` to integrate AI into your shell scripts and workflows.
 
 ## Basic Usage
 
+Get a quick answer, no interactive session
 ```bash
-# Get a quick answer, no interactive session
 copilot -p "What's the git command to undo my last commit but keep changes?"
 ```
 
-## Pipe Context In
+## Embed Context with `$()`
 
+Explain an error from a failed command
 ```bash
-# Explain an error from a failed command
-npm run build 2>&1 | copilot -p "Explain this error and how to fix it"
+copilot -p "Explain this error: $(npm run build 2>&1)"
+```
 
-# Summarize a file
-cat package.json | copilot -p "What does this project do?"
+Summarize a file
+```bash
+copilot -p "What does this project do? $(cat package.json)"
 ```
 
 ## Generate and Execute
 
+Generate a command, review it, then run
 ```bash
-# Generate a command, review it, then run
 copilot -p "Find all .ts files modified in the last 24 hours" | sh
+```
 
-# Or safer: preview first
-copilot -p "Command to delete node_modules in all subdirectories" 
+Or safer: preview first
+```bash
+copilot -p "Command to delete node_modules in all subdirectories"
 ```
 
 ## In Scripts
 
+Auto-generate commit messages
 ```bash
 #!/bin/bash
-# Auto-generate commit messages
 diff=$(git diff --cached)
-msg=$(echo "$diff" | copilot -p "Write a conventional commit message for this diff")
+msg=$(copilot -p "Write a conventional commit message for this diff: $diff")
 git commit -m "$msg"
 ```
 
@@ -47,4 +51,4 @@ git commit -m "$msg"
 
 Press → to continue...
 
-<!-- notes: The -p flag is the key to scripting with Copilot. It runs non-interactively and outputs to stdout, making it perfect for pipelines. Combine with --silent for clean output that's easy to parse or pipe to other commands. -->
+<!-- notes: The -p flag is the key to scripting with Copilot. It runs non-interactively and outputs to stdout. Use command substitution $() to embed context into your prompts since Copilot doesn't support piping stdin. -->

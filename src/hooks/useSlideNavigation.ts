@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useInput, useApp } from 'ink';
-import type { Slide, AppAction, AppMode } from '../types/index.js';
-import { getSlideSteps } from '../utils/slides.js';
+import type { Slide, AppAction, AppMode } from '../types';
+import { getSlideSteps } from '../utils/slides';
 
 type SlideNavigationOptions = {
   slides: Slide[];

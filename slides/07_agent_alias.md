@@ -12,24 +12,30 @@ cotest() {
 
 ## Use It
 
+Generate tests for a specific file
 ```bash
-# Generate tests for a specific file
 cotest "src/utils/markdown.ts"
+```
 
-# Test recent changes
+Test recent changes
+```bash
 cotest "the last 3 commits"
 ```
 
 ## More Agent Alias Ideas
 
+Security review
 ```zsh
-# Security review
 cosec() { copilot -p "Security review: $@" --agent security-reviewer; }
+```
 
-# Documentation
+Documentation
+```zsh
 codoc() { copilot -p "Document: $@" --agent docs-writer; }
+```
 
-# Code review
+Code review
+```zsh
 corev() { copilot -p "Review: $@" --agent code-reviewer; }
 ```
 

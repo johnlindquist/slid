@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, memo, useMemo } from 'react';
 import { Box, Text, useInput } from 'ink';
-import type { MarkdownSlide as MarkdownSlideType } from '../types/index.js';
-import { useTerminalSize } from '../hooks/useTerminalSize.js';
-import { createMarkdownRenderer, parseFragments } from '../utils/markdown.js';
-import { processMarkdownWithImages, hasImages, injectImages } from '../utils/images.js';
-import { SlideHeader, type BigTextFont } from './SlideHeader.js';
-import { ScrollIndicator } from './ScrollIndicator.js';
-import type { AppTheme } from '../utils/themes.js';
+import type { MarkdownSlide as MarkdownSlideType } from '../types';
+import { useTerminalSize } from '../hooks/useTerminalSize';
+import { createMarkdownRenderer, parseFragments } from '../utils/markdown';
+import { processMarkdownWithImages, hasImages, injectImages } from '../utils/images';
+import { SlideHeader, type BigTextFont } from './SlideHeader';
+import { ScrollIndicator } from './ScrollIndicator';
+import type { AppTheme } from '../utils/themes';
 
 // Strip ANSI escape codes to measure actual visible width
 const stripAnsi = (str: string): string =>

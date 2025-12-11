@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
-import { THEMES, type AppTheme } from '../utils/themes.js';
+import { THEMES, type AppTheme } from '../utils/themes';
 
 type ThemeSelectorProps = {
   currentTheme: AppTheme;

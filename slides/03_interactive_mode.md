@@ -4,11 +4,13 @@ Start a full conversation with `ico` (or `copilot`).
 
 ## Basic Entry
 
+Start interactive session (using our alias)
 ```bash
-# Start interactive session (using our alias)
 ico
+```
 
-# Start with an initial prompt
+Start with an initial prompt
+```bash
 ico "Help me refactor this codebase"
 ```
 
