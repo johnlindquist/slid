@@ -1,0 +1,41 @@
+# GitHub CLI Commands
+
+Use command substitution `$()` to embed `gh` CLI output in prompts.
+
+## Validate an Issue
+
+```bash
+# First, view the issue
+gh issue view 1
+
+# Then use !! to reference the previous command
+ico "Is this issue valid? $(!!)"
+#                          ^^ expands to: gh issue view 1
+```
+
+ZSH trick: `!!` expands to your last command, so you can run `gh` first, then embed it!
+
+## More Examples
+
+```bash
+# Summarize a PR
+co "Summarize this PR: $(gh pr view 123)"
+
+# Review changes
+co "Review these changes: $(gh pr diff 42)"
+
+# Prioritize work
+co "Which issue should I tackle? $(gh issue list --limit 5)"
+```
+
+## Key Pattern
+
+```bash
+copilot -p "Your question: $(gh command)"
+#                          ^^^^^^^^^^^^
+#                    Command substitution embeds output
+```
+
+Press -> to continue...
+
+<!-- notes: Use command substitution $() to embed gh CLI output directly into Copilot prompts. This works because the shell expands the command before passing the full string to Copilot. Much more reliable than piping. -->
