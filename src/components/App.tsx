@@ -11,6 +11,7 @@ import { Footer } from './Footer.js';
 import { EmptyState } from './EmptyState.js';
 import { ThemeSelector } from './ThemeSelector.js';
 import { THEMES, type AppTheme } from '../utils/themes.js';
+import { BIGTEXT_FONTS, type BigTextFont } from './SlideHeader.js';
 
 type AppProps = {
   slides: Slide[];
@@ -38,10 +39,17 @@ export function App({
   const [theme, setTheme] = useState<AppTheme>(THEMES.default!);
   const [showThemeSelector, setShowThemeSelector] = useState(false);
 
-  // Global toggle for theme menu
+  // Font state
+  const [fontIndex, setFontIndex] = useState(10); // Start at 'chrome' (index 10)
+  const currentFont: BigTextFont = BIGTEXT_FONTS[fontIndex];
+
+  // Global toggle for theme menu and font cycling
   useInput((input) => {
     if (input === 't' && !showThemeSelector) {
       setShowThemeSelector(true);
+    }
+    if (input === 'f' && !showThemeSelector) {
+      setFontIndex((i) => (i + 1) % BIGTEXT_FONTS.length);
     }
   });
 
@@ -121,6 +129,7 @@ export function App({
             step={step}
             totalSteps={totalSteps}
             theme={theme}
+            headerFont={currentFont}
           />
         ) : (
           <CastSlide slide={currentSlide} isActive={true} onPlay={handlePlay} theme={theme} />
@@ -133,6 +142,7 @@ export function App({
         totalSlides={slides.length}
         hasReloaded={reloadCount > 0}
         theme={theme}
+        currentFont={currentFont}
       />
     </Box>
   );

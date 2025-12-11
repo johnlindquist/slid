@@ -4,11 +4,29 @@ import BigText from 'ink-big-text';
 import Gradient from 'ink-gradient';
 import type { AppTheme } from '../utils/themes.js';
 
+export const BIGTEXT_FONTS = [
+  'block',
+  'slick',
+  'tiny',
+  'grid',
+  'pallet',
+  'shade',
+  'simple',
+  'simpleBlock',
+  '3d',
+  'simple3d',
+  'chrome',
+  'huge',
+] as const;
+
+export type BigTextFont = (typeof BIGTEXT_FONTS)[number];
+
 type SlideHeaderProps = {
   text: string;
   terminalWidth: number;
   contentWidth: number;
   theme: AppTheme;
+  font?: BigTextFont;
 };
 
 /**
@@ -20,16 +38,16 @@ export const SlideHeader = memo(function SlideHeader({
   terminalWidth,
   contentWidth,
   theme,
+  font = 'tiny',
 }: SlideHeaderProps) {
-  // BigText "tiny" font uses ~5 chars width per character
-  const maxBigTextChars = Math.floor(terminalWidth / 5) - 2;
-  const useBigText = text.length <= maxBigTextChars;
+  // Always use BigText - disable length-based fallback
+  const useBigText = true;
 
   return (
     <Box flexDirection="column" alignItems="center">
       {useBigText ? (
         <Gradient name={theme.colors.header.gradient}>
-          <BigText text={text} font="tiny" />
+          <BigText text={text} font={font} />
         </Gradient>
       ) : (
         <Text bold color={theme.colors.header.fallback}>

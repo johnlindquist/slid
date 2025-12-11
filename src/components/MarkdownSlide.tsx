@@ -4,7 +4,7 @@ import type { MarkdownSlide as MarkdownSlideType } from '../types/index.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { createMarkdownRenderer, parseFragments } from '../utils/markdown.js';
 import { processMarkdownWithImages, hasImages, injectImages } from '../utils/images.js';
-import { SlideHeader } from './SlideHeader.js';
+import { SlideHeader, type BigTextFont } from './SlideHeader.js';
 import { ScrollIndicator } from './ScrollIndicator.js';
 import type { AppTheme } from '../utils/themes.js';
 
@@ -27,6 +27,7 @@ type MarkdownSlideProps = {
   step: number;
   totalSteps: number;
   theme: AppTheme;
+  headerFont?: BigTextFont;
 };
 
 /**
@@ -38,6 +39,7 @@ export const MarkdownSlide = memo(function MarkdownSlide({
   step,
   totalSteps,
   theme,
+  headerFont,
 }: MarkdownSlideProps) {
   const [scrollY, setScrollY] = useState(0);
   const [processedContent, setProcessedContent] = useState<string | null>(null);
@@ -166,6 +168,7 @@ export const MarkdownSlide = memo(function MarkdownSlide({
           terminalWidth={terminalWidth}
           contentWidth={dynamicWidth}
           theme={theme}
+          font={headerFont}
         />
 
         <Box height={viewportHeight} flexDirection="column" alignItems="center" overflow="hidden">
