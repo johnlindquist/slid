@@ -1,6 +1,6 @@
 # mdflow Piping
 
-Chain agents together with variables and stdin.
+Chain agents using variables and standard input (stdin).
 
 ## Template Variables
 
@@ -16,6 +16,8 @@ What's the most important fix for {{ _topic }}?
 
 @src/**/*.ts
 ```
+
+Execute:
 
 ```bash
 plan.copilot.md --_topic "performance"
@@ -33,14 +35,14 @@ allow-all-tools: true
 Implement the plan for: {{ _stdin }}
 ```
 
-## Chain Them Together
+## Chaining Agents
 
 ```bash
 plan.copilot.md --_topic "reliability" | implement.copilot.md
 ```
 
-Plan → analyze codebase → output → implement!
+**Flow:** Plan → Analyze Codebase → Output → Implement!
 
-Press -> to continue...
+Press → to continue...
 
 <!-- notes: mdflow supports template variables with _prefix and stdin via _stdin. Pipe one agent's output to another to build powerful chains. The plan agent analyzes the codebase, then pipes its recommendation to the implement agent. -->

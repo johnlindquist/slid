@@ -1,6 +1,6 @@
 # Custom Agents
 
-Define specialized personas with `--agent` and markdown files.
+Define specialized personas using `--agent` and Markdown files.
 
 ## Create an Agent
 
@@ -23,15 +23,15 @@ You are a testing specialist. Your responsibilities:
 ```bash
 co "What is your role?" --agent testing-specialist
 
-co "Make sure the last 5 commits are covered" --agent testing-specialist
+co "Verify test coverage for the last 5 commits" --agent testing-specialist
 ```
 
 ## Agent File Structure
 
-- Location: `.github/agents/<name>.md`
-- Frontmatter: `name`, `description`
-- Body: System prompt defining the agent's role
+  - **Location:** `.github/agents/<name>.md`
+  - **Frontmatter:** `name`, `description`
+  - **Body:** System prompt defining the agent's role
 
-Press -> to continue...
+Press → to continue...
 
 <!-- notes: Custom agents let you define specialized personas for different tasks. Put markdown files in .github/agents/ with frontmatter for name and description, then invoke with --agent flag. Great for testing specialists, security reviewers, documentation writers, etc. -->

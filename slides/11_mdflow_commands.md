@@ -1,6 +1,6 @@
 # mdflow Commands
 
-Embed shell command output directly in prompts with `` !`cmd` ``.
+Embed shell command output directly into prompts using `` !`cmd` ``.
 
 ## Daily Summary Agent
 
@@ -23,7 +23,7 @@ Summarize this log:
 daily-summary.copilot.md
 ```
 
-Output shows: `[imports] Executing: git log --since="1 day ago"`
+**Output:** `[imports] Executing: git log --since="1 day ago"`
 
 ## More Examples
 
@@ -40,10 +40,10 @@ Environment:
 
 ## How It Works
 
-- `` !`command` `` executes at parse time
-- Output replaces the command inline
-- Combine with `@` imports for powerful context
+  - `` !`command` `` executes at parse time
+  - Output replaces the command inline
+  - Combine with `@` imports for richer context
 
-Press -> to continue...
+Press → to continue...
 
 <!-- notes: The bang-backtick syntax executes shell commands and inlines their output into your prompt. Great for injecting git logs, diffs, environment info, or any dynamic data. Commands run before the prompt is sent to the AI. -->

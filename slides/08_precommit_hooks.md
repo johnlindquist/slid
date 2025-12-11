@@ -1,6 +1,6 @@
 # Pre-commit Hooks
 
-Use Copilot in git hooks to enforce standards before commits.
+Use Copilot in Git hooks to enforce standards before committing.
 
 ## The Hook
 
@@ -8,14 +8,14 @@ Create `.git/hooks/pre-commit`:
 
 ```bash
 #!/bin/bash
-# Get staged .ts files
+# Identify staged .ts files
 STAGED=$(git diff --cached --name-only --diff-filter=ACM | grep '\.ts$')
 
 if [ -n "$STAGED" ]; then
   echo "Checking test coverage for staged .ts files..."
 
   OUTPUT=$(copilot --allow-all-tools -p \
-    "Check staged .ts files. If methods lack tests, print <ERROR>details</ERROR>" \
+    "Check staged .ts files. If methods lack tests, wrap details in <ERROR> tags." \
     --agent testing-specialist)
 
   # Check for <ERROR> tags in output
@@ -27,7 +27,7 @@ if [ -n "$STAGED" ]; then
 fi
 ```
 
-## What Happens
+## The Result
 
 ```bash
 git commit -m "adding a function"
@@ -37,6 +37,6 @@ git commit -m "adding a function"
 # - loadSlides() - Not tested
 ```
 
-Press -> to continue...
+Press → to continue...
 
 <!-- notes: Git hooks can invoke Copilot to enforce standards. This pre-commit hook checks staged TypeScript files for test coverage using the testing-specialist agent. The ERROR tag pattern lets you parse structured output and block commits when issues are found. -->

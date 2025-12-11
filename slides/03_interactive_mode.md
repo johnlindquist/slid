@@ -1,33 +1,35 @@
 # Interactive Mode
 
-Start a full conversation with `ico` (or `copilot`).
+Start a full conversation using `ico` (or `copilot`).
 
-## Basic Entry
+## Starting a Session
 
-Start interactive session (using our alias)
+Start an interactive session (using the `ico` alias):
+
 ```bash
 ico
 ```
 
-Start with an initial prompt
+Start with a specific prompt:
+
 ```bash
 ico "Help me refactor this codebase"
 ```
 
-## What You Get
+## Features
 
-- Full conversational AI assistant
-- File reading and editing capabilities
-- Shell command execution
-- Code generation and explanation
-- Persistent context throughout session
+  - Full conversational AI assistant
+  - File reading and editing capabilities
+  - Shell command execution
+  - Code generation and explanation
+  - Persistent context throughout the session
 
 ## When to Use
 
-- Complex multi-step tasks
-- Exploratory coding sessions
-- When you need back-and-forth discussion
-- Tasks requiring multiple file changes
+  - Complex multi-step tasks
+  - Exploratory coding sessions
+  - Tasks requiring back-and-forth discussion
+  - Multiple file changes
 
 Press → to continue...
 

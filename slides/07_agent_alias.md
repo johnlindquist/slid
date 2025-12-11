@@ -1,6 +1,6 @@
 # Agent Aliases
 
-Wrap agents in shell functions for quick access.
+Wrap agents in shell functions for faster access.
 
 ## Create a Testing Alias
 
@@ -12,29 +12,34 @@ cotest() {
 
 ## Use It
 
-Generate tests for a specific file
+Generate tests for a specific file:
+
 ```bash
 cotest "src/utils/markdown.ts"
 ```
 
-Test recent changes
+Test recent changes:
+
 ```bash
 cotest "the last 3 commits"
 ```
 
 ## More Agent Alias Ideas
 
-Security review
+Security review:
+
 ```zsh
 cosec() { copilot -p "Security review: $@" --agent security-reviewer; }
 ```
 
-Documentation
+Documentation:
+
 ```zsh
 codoc() { copilot -p "Document: $@" --agent docs-writer; }
 ```
 
-Code review
+Code review:
+
 ```zsh
 corev() { copilot -p "Review: $@" --agent code-reviewer; }
 ```
@@ -45,6 +50,6 @@ corev() { copilot -p "Review: $@" --agent code-reviewer; }
 alias() { copilot -p "<task>: $@" --agent <specialist>; }
 ```
 
-Press -> to continue...
+Press → to continue...
 
 <!-- notes: Combine custom agents with shell aliases for one-liner specialized tasks. cotest wraps the testing-specialist agent with a "Write tests for" prompt prefix. Create similar aliases for security reviews, documentation, code reviews, etc. -->

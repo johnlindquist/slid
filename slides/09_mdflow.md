@@ -1,6 +1,6 @@
 # mdflow
 
-Turn markdown files into executable AI agents.
+Turn Markdown files into executable AI agents.
 
 ## Create an Agent
 
@@ -15,26 +15,29 @@ Hello!
 
 ## Run It
 
-With mdflow command
+Using the `mdflow` command:
+
 ```bash
 mdflow .mdflow/hello.copilot.md
 ```
 
-Or directly (after shell setup)
+Or run directly (after setup):
+
 ```bash
 .mdflow/hello.copilot.md
 ```
 
-Or from PATH
+Or run from PATH:
+
 ```bash
 hello.copilot.md
 ```
 
 ## How It Works
 
-- **Filename** `task.copilot.md` → runs `copilot`
-- **Frontmatter** → CLI flags (`model: opus` → `--model opus`)
-- **Body** → the prompt
+  - **Filename** `task.copilot.md` → Runs `copilot`
+  - **Frontmatter** → CLI flags (`model: opus` → `--model opus`)
+  - **Body** → The prompt
 
 ## Shell Setup
 
@@ -42,8 +45,8 @@ hello.copilot.md
 mdflow --setup  # One-time setup
 ```
 
-Then run `.md` files directly from anywhere.
+After setup, you can run `.md` files directly from any location.
 
-Press -> to continue...
+Press → to continue...
 
 <!-- notes: mdflow makes markdown files executable. The filename determines which CLI to use (copilot, claude, gemini, codex). Frontmatter becomes CLI flags. The body is the prompt. After shell setup, you can run .md files directly like scripts. -->
