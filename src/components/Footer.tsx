@@ -24,9 +24,8 @@ export const Footer = memo(function Footer({
 }: FooterProps) {
   return (
     <Box justifyContent="space-between">
-      <Text color={theme.colors.ui.dim}> ←→ nav  ↑↓ scroll  f font  t theme  Tab overview  q quit</Text>
+      <Text color={theme.colors.ui.dim}> ←→ nav  ↑↓ scroll  f font  t theme  tab overview  q quit</Text>
       <Text color={theme.colors.ui.dim}>
-        {currentFont ? `[${currentFont}] ` : ''}
         {hasReloaded ? '● ' : ''}
         {slideIndex + 1}/{totalSlides}
       </Text>

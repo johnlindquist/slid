@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { render } from 'ink';
 import { spawnSync } from 'bun';
@@ -38,38 +37,6 @@ function exitPresentationMode(): void {
   process.stdout.write('\x1b[9;0t');
 }
 
-/**
- * Create a temporary cast file with resized dimensions to fill the terminal.
- * Returns the path to the temp file.
- */
-function createResizedCast(originalPath: string): string {
-  const content = fs.readFileSync(originalPath, 'utf-8');
-  const lines = content.split('\n');
-
-  // Parse the header (first line)
-  const header = JSON.parse(lines[0]);
-
-  // Get current terminal size with some padding
-  const cols = (process.stdout.columns || 120) - 4;
-  const rows = (process.stdout.rows || 40) - 4;
-
-  // Update dimensions in header
-  if (header.term) {
-    header.term.cols = cols;
-    header.term.rows = rows;
-  } else {
-    header.width = cols;
-    header.height = rows;
-  }
-
-  lines[0] = JSON.stringify(header);
-
-  // Write to temp file
-  const tempPath = path.join(os.tmpdir(), `slid-cast-${Date.now()}.cast`);
-  fs.writeFileSync(tempPath, lines.join('\n'));
-
-  return tempPath;
-}
 
 /**
  * Wait for a single keypress using blocking read.
@@ -91,7 +58,7 @@ function waitForKey(): 'next' | 'prev' | 'back' {
     const moreBuf = new Uint8Array(5);
     const moreBytes = fs.readSync(process.stdin.fd, moreBuf);
     for (let i = 0; i < moreBytes; i++) {
-      buf[bytesRead + i] = moreBuf[i];
+      buf[bytesRead + i] = moreBuf[i]!;
     }
     bytesRead += moreBytes;
   }
@@ -188,26 +155,14 @@ async function main() {
       while (stayInPlayback) {
         console.clear();
 
-        // Create a resized cast file to fill the terminal
-        let tempCastPath: string | null = null;
         try {
-          tempCastPath = createResizedCast(action.path);
-          spawnSync(['asciinema', 'play', '-q', '-i', '0.5', '-s', '1.5', tempCastPath], {
+          spawnSync(['asciinema', 'play', '-q', '-i', '0.5', '-s', '1.5', action.path], {
             stdin: 'inherit',
             stdout: 'inherit',
             stderr: 'inherit',
           });
         } catch {
           console.error("Error playing cast. Is 'asciinema' installed?");
-        } finally {
-          // Clean up temp file
-          if (tempCastPath) {
-            try {
-              fs.unlinkSync(tempCastPath);
-            } catch {
-              // Ignore cleanup errors
-            }
-          }
         }
 
         // Show navigation footer

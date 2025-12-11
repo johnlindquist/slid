@@ -21,6 +21,25 @@ const measureTextWidth = (text: string): number => {
 // Estimate BigText width (tiny font is ~5 chars per letter)
 const estimateBigTextWidth = (text: string): number => text.length * 5;
 
+// Estimate BigText height based on font (approximate line counts)
+const estimateBigTextHeight = (font: BigTextFont): number => {
+  const heights: Record<BigTextFont, number> = {
+    tiny: 5,
+    simple: 5,
+    slick: 6,
+    grid: 6,
+    pallet: 6,
+    shade: 6,
+    block: 8,
+    simpleBlock: 8,
+    '3d': 8,
+    simple3d: 8,
+    chrome: 8,
+    huge: 10,
+  };
+  return heights[font] ?? 7;
+};
+
 type MarkdownSlideProps = {
   slide: MarkdownSlideType;
   isActive: boolean;
@@ -47,9 +66,14 @@ export const MarkdownSlide = memo(function MarkdownSlide({
   const contentLinesRef = useRef<number>(0);
   const { width: terminalWidth, height: terminalHeight } = useTerminalSize();
 
-  // Calculate viewport dimensions - no reserved space, use flexGrow
-  const headerHeight = 0;
-  const viewportHeight = Math.max(5, terminalHeight - headerHeight);
+  // Calculate viewport dimensions accounting for fixed elements:
+  // - 1 line for footer (reserved by parent)
+  // - 1 line for padding above header
+  // - BigText header height (varies by font)
+  // - 1 line for ScrollIndicator
+  const headerHeightEstimate = estimateBigTextHeight(headerFont ?? 'tiny');
+  const fixedOverhead = 1 + 1 + headerHeightEstimate + 1; // footer + padding + header + scroll indicator
+  const viewportHeight = Math.max(5, terminalHeight - fixedOverhead);
 
   // Handle scroll input
   useInput((input, key) => {

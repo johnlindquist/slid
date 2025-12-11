@@ -40,8 +40,8 @@ export function App({
   const [showThemeSelector, setShowThemeSelector] = useState(false);
 
   // Font state
-  const [fontIndex, setFontIndex] = useState(10); // Start at 'chrome' (index 10)
-  const currentFont: BigTextFont = BIGTEXT_FONTS[fontIndex];
+  const [fontIndex, setFontIndex] = useState(2); // Start at 'tiny' (index 2) - smaller font
+  const currentFont: BigTextFont = BIGTEXT_FONTS[fontIndex]!;
 
   // Global toggle for theme menu and font cycling
   useInput((input) => {
