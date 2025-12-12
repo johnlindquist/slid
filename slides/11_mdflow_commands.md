@@ -44,6 +44,4 @@ Environment:
   - Output replaces the command inline
   - Combine with `@` imports for richer context
 
-Press → to continue...
-
 <!-- notes: The bang-backtick syntax executes shell commands and inlines their output into your prompt. Great for injecting git logs, diffs, environment info, or any dynamic data. Commands run before the prompt is sent to the AI. -->

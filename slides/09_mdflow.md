@@ -47,6 +47,4 @@ mdflow --setup  # One-time setup
 
 After setup, you can run `.md` files directly from any location.
 
-Press → to continue...
-
 <!-- notes: mdflow makes markdown files executable. The filename determines which CLI to use (copilot, claude, gemini, codex). Frontmatter becomes CLI flags. The body is the prompt. After shell setup, you can run .md files directly like scripts. -->

@@ -37,6 +37,4 @@ git commit -m "adding a function"
 # - loadSlides() - Not tested
 ```
 
-Press → to continue...
-
 <!-- notes: Git hooks can invoke Copilot to enforce standards. This pre-commit hook checks staged TypeScript files for test coverage using the testing-specialist agent. The ERROR tag pattern lets you parse structured output and block commits when issues are found. -->

@@ -32,6 +32,4 @@ co "Verify test coverage for the last 5 commits" --agent testing-specialist
   - **Frontmatter:** `name`, `description`
   - **Body:** System prompt defining the agent's role
 
-Press → to continue...
-
 <!-- notes: Custom agents let you define specialized personas for different tasks. Put markdown files in .github/agents/ with frontmatter for name and description, then invoke with --agent flag. Great for testing specialists, security reviewers, documentation writers, etc. -->

@@ -4,6 +4,7 @@ export type SlideTheme = 'default' | 'neon' | 'minimal';
 
 export type SlideMetadata = {
   title?: string;
+  subtitle?: string;
   layout?: SlideLayout;
   theme?: SlideTheme;
   hidden?: boolean;
@@ -56,8 +57,12 @@ export type PresenterMessage = {
 };
 
 // --- CLI Types ---
+export type SlidesSource =
+  | { type: 'directory'; path: string }
+  | { type: 'marp'; path: string };
+
 export interface ParsedArgs {
-  slidesDir: string;
+  slidesSource: SlidesSource;
   startAt: number;
   showHelp: boolean;
   showVersion: boolean;

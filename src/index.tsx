@@ -5,7 +5,7 @@ import { spawnSync } from 'bun';
 import { App } from './components/App';
 import type { AppAction } from './types';
 import { parseCliArgs, showHelp, showVersion } from './utils/cli';
-import { validateSlidesDir, loadSlides } from './utils/slides';
+import { validateSlidesSource, loadSlidesFromSource, getSlidesWatchPath } from './utils/slides';
 import {
   startPresenterServer,
   broadcastSlideChange,
@@ -98,9 +98,10 @@ async function main() {
     process.exit(0);
   }
 
-  validateSlidesDir(args.slidesDir);
+  validateSlidesSource(args.slidesSource);
 
-  const slides = loadSlides(args.slidesDir);
+  const slides = loadSlidesFromSource(args.slidesSource);
+  const slidesWatchPath = getSlidesWatchPath(args.slidesSource);
 
   if (args.startAt >= slides.length) {
     console.error(
@@ -134,7 +135,7 @@ async function main() {
         <App
           slides={slides}
           initialIndex={currentIndex}
-          slidesDir={args.slidesDir}
+          slidesDir={slidesWatchPath}
           onExit={resolve}
           onSlideChange={handleSlideChange}
         />

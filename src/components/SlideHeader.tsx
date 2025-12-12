@@ -27,6 +27,7 @@ type SlideHeaderProps = {
   contentWidth: number;
   theme: AppTheme;
   font?: BigTextFont;
+  subtitle?: string;
 };
 
 /**
@@ -39,12 +40,13 @@ export const SlideHeader = memo(function SlideHeader({
   contentWidth,
   theme,
   font = 'tiny',
+  subtitle,
 }: SlideHeaderProps) {
   // Always use BigText - disable length-based fallback
   const useBigText = true;
 
   return (
-    <Box alignItems="center">
+    <Box flexDirection="column" alignItems="center">
       {useBigText ? (
         <Gradient name={theme.colors.header.gradient}>
           <BigText text={text} font={font} />
@@ -56,6 +58,11 @@ export const SlideHeader = memo(function SlideHeader({
           {text}
           {'  \n'}
           {'═'.repeat(Math.min(text.length + 4, contentWidth))}
+        </Text>
+      )}
+      {subtitle && (
+        <Text color={theme.colors.header.fallback} dimColor>
+          {subtitle}
         </Text>
       )}
     </Box>

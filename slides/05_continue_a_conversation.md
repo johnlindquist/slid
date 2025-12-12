@@ -45,6 +45,4 @@ copilot --resume abc123
   - Avoid re-explaining your codebase
   - Chain quick prompts into deeper exploration
 
-Press → to continue...
-
 <!-- notes: The --continue flag resumes your most recent session with full context. This is powerful for iterative workflows - get quick suggestions with co, then use cocon to dive deeper without losing context. The --resume flag lets you pick from recent sessions. -->

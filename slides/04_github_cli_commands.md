@@ -46,6 +46,4 @@ copilot -p "Your question: $(gh command)"
 #                          Command substitution embeds output
 ```
 
-Press → to continue...
-
 <!-- notes: Use command substitution $() to embed gh CLI output directly into Copilot prompts. This works because the shell expands the command before passing the full string to Copilot. Much more reliable than piping. -->

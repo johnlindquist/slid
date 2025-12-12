@@ -89,10 +89,11 @@ export const MarkdownSlide = memo(function MarkdownSlide({
     setScrollY(0);
   }, [slide.filename]);
 
-  // Parse header text
+  // Parse header text and subtitle
   const lines = slide.content.split('\n');
   const contentHeader = lines.find((l) => l.startsWith('# '))?.replace('# ', '');
   const headerText = slide.metadata.title || contentHeader || slide.title;
+  const subtitle = slide.metadata.subtitle;
 
   // Remove header and parse fragments
   const contentWithoutHeader = slide.content.replace(/^#\s+.+\n?/, '');
@@ -196,6 +197,7 @@ export const MarkdownSlide = memo(function MarkdownSlide({
           contentWidth={terminalWidth}
           theme={theme}
           font={headerFont}
+          subtitle={subtitle}
         />
       </Box>
       {/* Content constrained to dynamicWidth for readability */}

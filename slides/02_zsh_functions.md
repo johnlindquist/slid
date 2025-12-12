@@ -46,6 +46,4 @@ cores() { copilot --allow-all-tools --resume "$@"; }  # Resume a specific sessio
   - `-i <prompt>`: Interactive mode with initial prompt
   - `--continue` / `--resume`: Session management
 
-Press → to continue...
-
 <!-- notes: These zsh functions wrap the GitHub Copilot CLI for quick access. The 'co' function is for quick one-off prompts, while 'ico' starts a full interactive session. Model suffixes let you quickly switch between Opus, Sonnet, Haiku, Codex, and Gemini models. -->

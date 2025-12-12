@@ -45,6 +45,4 @@ Say red
   - `{% for item in list %}` - Loops
   - `{{ variable | upcase }}` - Filters
 
-Press → to continue...
-
 <!-- notes: mdflow uses LiquidJS for templating. You get conditionals, loops, and filters. Positional arguments become _1, _2, _3 etc. Use --dry-run to preview what prompt will be sent without actually running it. -->

@@ -18,19 +18,14 @@ ico "Help me refactor this codebase"
 
 ## Features
 
-  - Full conversational AI assistant
-  - File reading and editing capabilities
-  - Shell command execution
-  - Code generation and explanation
-  - Persistent context throughout the session
+  - Slash commands
+  - Message history
+  - Clean messaging around tooling and permissions
 
 ## When to Use
 
-  - Complex multi-step tasks
   - Exploratory coding sessions
   - Tasks requiring back-and-forth discussion
   - Multiple file changes
-
-Press → to continue...
 
 <!-- notes: Interactive mode is the default experience. Use ico for a full session where you can have a conversation. The -i flag with a prompt starts interactive mode but immediately executes your prompt first. -->

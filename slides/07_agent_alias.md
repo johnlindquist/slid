@@ -50,6 +50,4 @@ corev() { copilot -p "Review: $@" --agent code-reviewer; }
 alias() { copilot -p "<task>: $@" --agent <specialist>; }
 ```
 
-Press → to continue...
-
 <!-- notes: Combine custom agents with shell aliases for one-liner specialized tasks. cotest wraps the testing-specialist agent with a "Write tests for" prompt prefix. Create similar aliases for security reviews, documentation, code reviews, etc. -->

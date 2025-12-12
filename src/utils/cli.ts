@@ -1,16 +1,47 @@
 import { parseArgs } from 'node:util';
-import type { ParsedArgs } from '../types';
-import { VERSION, DEFAULT_SLIDES_DIR } from './constants';
+import fs from 'node:fs';
+import type { ParsedArgs, SlidesSource } from '../types';
+import { VERSION, DEFAULT_SLIDES_DIR, DOT_SLID_DIR } from './constants';
+
+/**
+ * Determine the slides source to use.
+ * Priority: 1) explicit path (file or dir), 2) .slid directory, 3) ./slides
+ */
+const resolveSlidesSource = (explicitPath?: string): SlidesSource => {
+  if (explicitPath) {
+    // Check if it's a MARP file (single .md file)
+    if (explicitPath.endsWith('.md') && fs.existsSync(explicitPath)) {
+      const stats = fs.statSync(explicitPath);
+      if (stats.isFile()) {
+        return { type: 'marp', path: explicitPath };
+      }
+    }
+    return { type: 'directory', path: explicitPath };
+  }
+
+  // Check for .slid directory in current working directory
+  if (fs.existsSync(DOT_SLID_DIR) && fs.statSync(DOT_SLID_DIR).isDirectory()) {
+    return { type: 'directory', path: DOT_SLID_DIR };
+  }
+
+  return { type: 'directory', path: DEFAULT_SLIDES_DIR };
+};
 
 export const showHelp = (): void => {
   console.log(`
 slid - Terminal-based presentation tool
 
 Usage:
-  bun run index.tsx [options] [slides-directory]
+  slid [options] [slides-directory|marp-file.md]
 
 Arguments:
-  slides-directory    Path to slides directory (default: ./slides)
+  slides-directory    Path to slides directory (default: .slid or ./slides)
+  marp-file.md        Single MARP-format markdown file with --- separators
+
+Directory Resolution:
+  1. If a path is provided, use it
+  2. If .slid/ exists in current directory, use it
+  3. Fall back to ./slides
 
 Options:
   -s, --start-at <n>  Start at slide number (1-indexed, default: 1)
@@ -20,11 +51,12 @@ Options:
   --wezterm-config    Show WezTerm config snippet for presentation mode
 
 Examples:
-  bun run index.tsx                      # Use ./slides directory
-  bun run index.tsx ./my-talk            # Use custom directory
-  bun run index.tsx --start-at=5         # Start at slide 5
-  bun run index.tsx --presenter          # Enable presenter mode
-  bun run index.tsx ./presentations -s 3 # Custom dir, start at slide 3
+  slid                           # Auto-detect .slid/ or ./slides
+  slid ./my-talk                 # Use custom directory
+  slid presentation.md           # Use MARP-format single file
+  slid --start-at=5              # Start at slide 5
+  slid --presenter               # Enable presenter mode
+  slid ./presentations -s 3      # Custom dir, start at slide 3
 `);
 };
 
@@ -78,7 +110,7 @@ export const parseCliArgs = (): ParsedArgs => {
       allowPositionals: true,
     });
 
-    const slidesDir = positionals[0] || DEFAULT_SLIDES_DIR;
+    const slidesSource = resolveSlidesSource(positionals[0]);
 
     let startAt = 0;
     if (values['start-at']) {
@@ -93,7 +125,7 @@ export const parseCliArgs = (): ParsedArgs => {
     }
 
     return {
-      slidesDir,
+      slidesSource,
       startAt,
       showHelp: values.help ?? false,
       showVersion: values.version ?? false,
