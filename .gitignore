@@ -36,6 +36,10 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # Built binaries
 slid
 slid-*
+mddeck
+mddeck-*
+mdplay
+mdplay-*
 slides-cli
 slides-cli-*
 *.exe

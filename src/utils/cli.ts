@@ -1,11 +1,11 @@
 import { parseArgs } from 'node:util';
 import fs from 'node:fs';
 import type { ParsedArgs, SlidesSource } from '../types';
-import { VERSION, DEFAULT_SLIDES_DIR, DOT_SLID_DIR } from './constants';
+import { VERSION, DEFAULT_SLIDES_DIR, DOT_DECK_DIR } from './constants';
 
 /**
  * Determine the slides source to use.
- * Priority: 1) explicit path (file or dir), 2) .slid directory, 3) ./slides
+ * Priority: 1) explicit path (file or dir), 2) .deck directory, 3) ./slides
  */
 const resolveSlidesSource = (explicitPath?: string): SlidesSource => {
   if (explicitPath) {
@@ -19,9 +19,9 @@ const resolveSlidesSource = (explicitPath?: string): SlidesSource => {
     return { type: 'directory', path: explicitPath };
   }
 
-  // Check for .slid directory in current working directory
-  if (fs.existsSync(DOT_SLID_DIR) && fs.statSync(DOT_SLID_DIR).isDirectory()) {
-    return { type: 'directory', path: DOT_SLID_DIR };
+  // Check for .deck directory in current working directory
+  if (fs.existsSync(DOT_DECK_DIR) && fs.statSync(DOT_DECK_DIR).isDirectory()) {
+    return { type: 'directory', path: DOT_DECK_DIR };
   }
 
   return { type: 'directory', path: DEFAULT_SLIDES_DIR };
@@ -29,18 +29,18 @@ const resolveSlidesSource = (explicitPath?: string): SlidesSource => {
 
 export const showHelp = (): void => {
   console.log(`
-slid - Terminal-based presentation tool
+mdplay - Terminal-based markdown presentation tool
 
 Usage:
-  slid [options] [slides-directory|marp-file.md]
+  mdplay [options] [slides-directory|marp-file.md]
 
 Arguments:
-  slides-directory    Path to slides directory (default: .slid or ./slides)
+  slides-directory    Path to slides directory (default: .deck or ./slides)
   marp-file.md        Single MARP-format markdown file with --- separators
 
 Directory Resolution:
   1. If a path is provided, use it
-  2. If .slid/ exists in current directory, use it
+  2. If .deck/ exists in current directory, use it
   3. Fall back to ./slides
 
 Options:
@@ -51,12 +51,12 @@ Options:
   --wezterm-config    Show WezTerm config snippet for presentation mode
 
 Examples:
-  slid                           # Auto-detect .slid/ or ./slides
-  slid ./my-talk                 # Use custom directory
-  slid presentation.md           # Use MARP-format single file
-  slid --start-at=5              # Start at slide 5
-  slid --presenter               # Enable presenter mode
-  slid ./presentations -s 3      # Custom dir, start at slide 3
+  mdplay                           # Auto-detect .deck/ or ./slides
+  mdplay ./my-talk                 # Use custom directory
+  mdplay presentation.md           # Use MARP-format single file
+  mdplay --start-at=5              # Start at slide 5
+  mdplay --presenter               # Enable presenter mode
+  mdplay ./presentations -s 3      # Custom dir, start at slide 3
 `);
 };
 
@@ -64,9 +64,9 @@ export const showWeztermConfig = (): void => {
   console.log(`
 Add this to your ~/.wezterm.lua to enable presentation mode (hide tab bar):
 
--- Slid presentation mode: hide tab bar when slid_presentation user var is set
+-- mdplay presentation mode: hide tab bar when mdplay_presentation user var is set
 wezterm.on('user-var-changed', function(window, pane, name, value)
-  if name == 'slid_presentation' then
+  if name == 'mdplay_presentation' then
     local overrides = window:get_config_overrides() or {}
     if value == '1' then
       overrides.enable_tab_bar = false
@@ -82,7 +82,7 @@ end)
 };
 
 export const showVersion = (): void => {
-  console.log(`slid v${VERSION}`);
+  console.log(`mdplay v${VERSION}`);
 };
 
 export const parseCliArgs = (): ParsedArgs => {

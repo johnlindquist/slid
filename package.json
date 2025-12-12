@@ -1,20 +1,42 @@
 {
-  "name": "slid",
+  "name": "mdplay",
+  "version": "1.0.0",
+  "description": "Terminal-based markdown presentation tool with MARP support",
   "module": "src/index.tsx",
   "type": "module",
-  "private": true,
   "bin": {
-    "slid": "./slid"
+    "mdplay": "./mdplay"
+  },
+  "files": [
+    "mdplay",
+    "src",
+    "presenter.html"
+  ],
+  "keywords": [
+    "slides",
+    "presentation",
+    "markdown",
+    "terminal",
+    "cli",
+    "marp",
+    "deck"
+  ],
+  "author": "John Lindquist",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johnlindquist/slid.git"
   },
   "scripts": {
     "start": "bun run src/index.tsx",
     "dev": "bun run --watch src/index.tsx",
-    "build": "bun build --compile --minify src/index.tsx --outfile slid",
-    "build:darwin-arm64": "bun build --compile --minify --target=bun-darwin-arm64 src/index.tsx --outfile slid-darwin-arm64",
-    "build:darwin-x64": "bun build --compile --minify --target=bun-darwin-x64 src/index.tsx --outfile slid-darwin-x64",
-    "build:linux-x64": "bun build --compile --minify --target=bun-linux-x64 src/index.tsx --outfile slid-linux-x64",
+    "build": "bun build --compile --minify src/index.tsx --outfile mdplay",
+    "build:darwin-arm64": "bun build --compile --minify --target=bun-darwin-arm64 src/index.tsx --outfile mdplay-darwin-arm64",
+    "build:darwin-x64": "bun build --compile --minify --target=bun-darwin-x64 src/index.tsx --outfile mdplay-darwin-x64",
+    "build:linux-x64": "bun build --compile --minify --target=bun-linux-x64 src/index.tsx --outfile mdplay-linux-x64",
     "build:all": "bun run build:darwin-arm64 && bun run build:darwin-x64 && bun run build:linux-x64",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "bun run build"
   },
   "devDependencies": {
     "@types/bun": "latest",

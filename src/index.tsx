@@ -19,7 +19,7 @@ import {
 function enterPresentationMode(): void {
   // Set user var for WezTerm config to react to (requires wezterm.lua config)
   // Base64("1") = MQ==
-  process.stdout.write('\x1b]1337;SetUserVar=slid_presentation=MQ==\x07');
+  process.stdout.write('\x1b]1337;SetUserVar=mdplay_presentation=MQ==\x07');
 
   // Alternative: use xterm window manipulation sequences
   // CSI 9;1t = Maximize window
@@ -31,7 +31,7 @@ function enterPresentationMode(): void {
  */
 function exitPresentationMode(): void {
   // Reset user var - Base64("0") = MA==
-  process.stdout.write('\x1b]1337;SetUserVar=slid_presentation=MA==\x07');
+  process.stdout.write('\x1b]1337;SetUserVar=mdplay_presentation=MA==\x07');
 
   // CSI 9;0t = Restore window
   process.stdout.write('\x1b[9;0t');
